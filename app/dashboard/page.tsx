@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo, useMemo } from 'react'
 import Link from 'next/link'
 import { SiteShell } from '@/components/site-shell'
 import { RequireAuth } from '@/components/require-auth'
@@ -45,15 +45,22 @@ function DashboardContent() {
 
   if (!profile) return null
 
-  const planLabel = profile.plan === 'free' ? 'Free' : profile.plan === 'pro' ? 'Pro' : 'Premium'
-  const usedPct = Math.min(100, Math.round((profile.credits / 200) * 100))
+  const planLabel = useMemo(() => 
+    profile.plan === 'free' ? 'Free' : profile.plan === 'pro' ? 'Pro' : 'Premium',
+    [profile.plan]
+  )
+  
+  const usedPct = useMemo(() => 
+    Math.min(100, Math.round((profile.credits / 200) * 100)),
+    [profile.credits]
+  )
 
-  const stats = [
+  const stats = useMemo(() => [
     { icon: 'bolt-bold', label: 'Credits', value: profile.credits.toLocaleString(), accent: true },
     { icon: 'crown-bold', label: 'Plan', value: planLabel },
     { icon: 'history-bold', label: 'Generations', value: history.length.toString() },
     { icon: 'heart-bold', label: 'Favorites', value: profile.favoriteVoices.length.toString() },
-  ]
+  ], [profile.credits, planLabel, history.length, profile.favoriteVoices.length])
 
   return (
     <div className="animate-fade-up">
@@ -166,7 +173,7 @@ function DashboardContent() {
   )
 }
 
-function QuickAction({ href, icon, title, desc }: { href: string; icon: string; title: string; desc: string }) {
+const QuickAction = memo(function QuickAction({ href, icon, title, desc }: { href: string; icon: string; title: string; desc: string }) {
   return (
     <Link href={href}>
       <GCard className="flex cursor-pointer flex-col gap-3 hover:border-brand-1/50 transition-colors">
@@ -178,4 +185,4 @@ function QuickAction({ href, icon, title, desc }: { href: string; icon: string; 
       </GCard>
     </Link>
   )
-}
+})

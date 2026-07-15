@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
+import { useState, type ReactNode, memo, useMemo } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
@@ -41,13 +41,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      {/* animated background lines */}
+      {/* optimized static background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 grid-lines opacity-40" />
-        <div className="absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-brand-2/20 blur-[120px]" />
-        <div className="absolute bottom-0 right-0 size-[28rem] rounded-full bg-brand-3/15 blur-[120px]" />
-        <div className="absolute left-0 top-1/3 h-px w-full cut-lines" />
-        <div className="absolute left-0 top-2/3 h-px w-full cut-lines" />
+        <div className="absolute inset-0 grid-lines opacity-20" />
+        <div className="absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-brand-2/10 blur-3xl" />
+        <div className="absolute bottom-0 right-0 size-[28rem] rounded-full bg-brand-3/8 blur-3xl" />
       </div>
 
       {/* header */}
@@ -209,7 +207,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   )
 }
 
-function Avatar({ profile }: { profile: { displayName?: string; avatarUrl?: string } | null }) {
+const Avatar = memo(function Avatar({ profile }: { profile: { displayName?: string; avatarUrl?: string } | null }) {
   if (profile?.avatarUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -225,7 +223,33 @@ function Avatar({ profile }: { profile: { displayName?: string; avatarUrl?: stri
       {(profile?.displayName ?? "U").slice(0, 1).toUpperCase()}
     </span>
   )
-}
+})
+
+const FooterCol = memo(function FooterCol({
+  title,
+  links,
+}: {
+  title: string
+  links: { label: string; href: string }[]
+}) {
+  return (
+    <div>
+      <p className="text-sm font-medium">{title}</p>
+      <ul className="mt-4 flex flex-col gap-2.5">
+        {links.map((l) => (
+          <li key={l.href}>
+            <Link
+              href={l.href}
+              className="text-sm text-muted-foreground transition hover:text-foreground"
+            >
+              {l.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+})
 
 function SiteFooter() {
   const [email, setEmail] = useState("")
@@ -295,31 +319,5 @@ function SiteFooter() {
         </div>
       </div>
     </footer>
-  )
-}
-
-function FooterCol({
-  title,
-  links,
-}: {
-  title: string
-  links: { label: string; href: string }[]
-}) {
-  return (
-    <div>
-      <p className="text-sm font-medium">{title}</p>
-      <ul className="mt-4 flex flex-col gap-2.5">
-        {links.map((l) => (
-          <li key={l.href}>
-            <Link
-              href={l.href}
-              className="text-sm text-muted-foreground transition hover:text-foreground"
-            >
-              {l.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }

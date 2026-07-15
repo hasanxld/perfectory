@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useCallback, memo } from "react"
 import Link from "next/link"
 import { SiteShell } from "@/components/site-shell"
 import { GButton, GCard, GTextarea, SectionLabel } from "@/components/ui-kit"
@@ -38,7 +38,7 @@ export default function GeneratorPage() {
   const canGenerate = user ? credits > 0 : true
   const chars = text.trim().length
 
-  async function handleGenerate() {
+  const handleGenerate = useCallback(async () => {
     setNotice("")
     if (!text.trim()) {
       setNotice("Please enter some text first.")
@@ -68,7 +68,7 @@ export default function GeneratorPage() {
       }
     }
     tts.speak({ text, lang, voiceURI, rate, pitch, volume })
-  }
+  }, [text, user, credits, tts, profile, voiceURI, lang, rate, pitch, volume, refreshProfile])
 
   const noVoiceForLang = langVoices.length === 0
 
@@ -143,24 +143,23 @@ export default function GeneratorPage() {
               <span className="font-mono">{chars} chars</span>
             </div>
 
-            {/* animated waveform */}
+            {/* optimized waveform */}
             <div className="mt-5 flex h-20 items-center justify-center gap-1 overflow-hidden rounded-2xl border border-border bg-background/40">
-              {Array.from({ length: 48 }).map((_, i) => (
+              {tts.speaking && Array.from({ length: 24 }).map((_, i) => (
                 <span
                   key={i}
-                  className="w-1 rounded-full"
+                  className="w-1 rounded-full animate-pulse"
                   style={{
-                    height: tts.speaking ? undefined : "12px",
+                    height: "12px",
                     backgroundImage:
                       "linear-gradient(180deg, oklch(0.72 0.16 200) 0%, oklch(0.62 0.2 265) 50%, oklch(0.68 0.19 320) 100%)",
-                    transformOrigin: "center",
-                    animation: tts.speaking
-                      ? `wave 1s ease-in-out ${i * 0.03}s infinite`
-                      : "none",
-                    minHeight: tts.speaking ? "40px" : "10px",
+                    animation: `wave 0.8s ease-in-out ${i * 0.04}s infinite`,
                   }}
                 />
               ))}
+              {!tts.speaking && (
+                <div className="text-xs text-muted-foreground">Ready to generate</div>
+              )}
             </div>
 
             {/* controls */}
@@ -248,7 +247,7 @@ export default function GeneratorPage() {
   )
 }
 
-function Slider({
+const Slider = memo(function Slider({
   label,
   icon,
   value,
@@ -267,6 +266,10 @@ function Slider({
   onChange: (v: number) => void
   suffix?: string
 }) {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(Number(e.target.value))
+  }, [onChange])
+
   return (
     <div>
       <div className="mb-2 flex items-center justify-between text-sm">
@@ -285,9 +288,9 @@ function Slider({
         max={max}
         step={step}
         value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={handleChange}
         className="h-2 w-full cursor-pointer appearance-none rounded-full bg-secondary accent-[var(--brand-1)]"
       />
     </div>
   )
-}
+})

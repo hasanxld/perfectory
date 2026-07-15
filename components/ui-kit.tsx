@@ -23,21 +23,17 @@ export const GButton = forwardRef<HTMLButtonElement, BtnProps>(
         disabled={disabled || loading}
         className={cn(
           "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl font-medium tracking-wide transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60",
-          "[clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]",
           sizes[size],
           variant === "solid" &&
-            "gradient-brand text-primary-foreground border border-border shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/15 hover:-translate-y-0.5",
+            "gradient-brand text-primary-foreground border border-border shadow-md shadow-black/5 hover:shadow-lg hover:shadow-black/10 hover:-translate-y-0.5 active:translate-y-0",
           variant === "outline" &&
-            "gradient-border text-foreground hover:-translate-y-0.5",
+            "border border-border text-foreground hover:-translate-y-0.5 active:translate-y-0",
           variant === "ghost" &&
-            "text-muted-foreground hover:text-foreground hover:bg-secondary/60",
+            "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
           className,
         )}
         {...props}
       >
-        {variant === "solid" && (
-          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-        )}
         {loading && (
           <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
         )}
@@ -80,18 +76,14 @@ GTextarea.displayName = "GTextarea"
 export function GCard({
   children,
   className,
-  cut = true,
 }: {
   children: ReactNode
   className?: string
-  cut?: boolean
 }) {
   return (
     <div
       className={cn(
         "gradient-border rounded-3xl p-6",
-        cut &&
-          "[clip-path:polygon(22px_0,100%_0,100%_calc(100%-22px),calc(100%-22px)_100%,0_100%,0_22px)]",
         className,
       )}
     >
