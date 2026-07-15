@@ -1,31 +1,36 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Share_Tech, Share_Tech_Mono } from 'next/font/google'
-import { AuthProvider } from '@/lib/auth-context'
 import './globals.css'
 
-const shareTech = Share_Tech({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-share-tech',
-})
-const shareTechMono = Share_Tech_Mono({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-share-tech-mono',
-})
-
 export const metadata: Metadata = {
-  title: 'Perfectory Voice — AI Text to Voice Generator',
-  description:
-    'Convert text to natural voice in Bangla, English and Hindi. Advanced, gradient-powered text-to-speech studio.',
+  title: 'v0 App',
+  description: 'Created with v0',
   generator: 'v0.app',
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'dark',
-  themeColor: '#131226',
-  userScalable: true,
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
 }
 
 export default function RootLayout({
@@ -34,9 +39,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${shareTech.variable} ${shareTechMono.variable} bg-background`}>
-      <body className="font-sans antialiased">
-        <AuthProvider>{children}</AuthProvider>
+    <html lang="en">
+      <body className="antialiased">
+        {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
