@@ -283,16 +283,6 @@ function SiteFooter() {
             <ul className="space-y-2">
               <li><a href="#" className="text-sm text-muted-foreground transition hover:text-foreground">Privacy Policy</a></li>
               <li><a href="#" className="text-sm text-muted-foreground transition hover:text-foreground">Terms & Conditions</a></li>
-              <li>
-                <p className="text-sm font-medium text-foreground mt-4 mb-2">Languages</p>
-                <div className="flex flex-wrap gap-2">
-                  {["Bangla", "English", "Hindi"].map((l) => (
-                    <span key={l} className="text-xs font-medium text-foreground">
-                      {l}
-                    </span>
-                  ))}
-                </div>
-              </li>
             </ul>
           </div>
         </div>
