@@ -97,7 +97,7 @@ export default function SignupPage() {
     
     setLoading(true)
     try {
-      await signupEmail(fullName, email, password, phone, avatarUrl || undefined)
+      await signupEmail(fullName, email, password, phone)
       router.push("/verify-email")
     } catch (err) {
       setError(mapError(err))

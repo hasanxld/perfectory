@@ -26,6 +26,7 @@ import {
   getUserProfile,
   createAccountSettings,
   updateEmailVerificationSentTime,
+  updateEmailVerificationStatus,
   type UserProfile,
 } from "./firestore-service"
 
@@ -33,9 +34,10 @@ type AuthContextType = {
   user: User | null
   profile: UserProfile | null
   loading: boolean
+  profileLoading: boolean
   refreshProfile: () => Promise<void>
   loginEmail: (email: string, password: string) => Promise<void>
-  signupEmail: (name: string, email: string, password: string, phone?: string, avatarUrl?: string) => Promise<void>
+  signupEmail: (name: string, email: string, password: string, phone?: string) => Promise<void>
   loginGoogle: () => Promise<void>
   logout: () => Promise<void>
 }
@@ -45,10 +47,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)       // Firebase Auth initialising
+  const [profileLoading, setProfileLoading] = useState(false) // Firestore profile loading
 
   const refreshProfile = useCallback(async () => {
-    if (!auth || !auth.currentUser) return
+    if (!auth?.currentUser) return
     try {
       const p = await getUserProfile(auth.currentUser.uid)
       setProfile(p)
@@ -59,148 +62,154 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!auth) {
-      console.error("[Auth] Auth instance not available")
       setLoading(false)
       return
     }
 
     const unsub = onAuthStateChanged(auth, async (u) => {
-      try {
-        setUser(u)
-        if (u) {
+      setUser(u)
+      if (u) {
+        setProfileLoading(true)
+        try {
           let p = await getUserProfile(u.uid)
           if (!p) {
-            // New user — create profile (emailVerified false by default for email/password)
+            // Profile doesn't exist yet — create it (new user)
             p = await createUserProfile({
               uid: u.uid,
               email: u.email || '',
               displayName: u.displayName || '',
               avatarUrl: u.photoURL || undefined,
-              emailVerified: u.emailVerified, // Google users are auto-verified
+              emailVerified: u.emailVerified,
             })
             await createAccountSettings(u.uid)
           } else if (u.emailVerified && !p.emailVerified) {
-            // Firebase Auth says verified but Firestore is not updated yet — sync it
-            const { updateEmailVerificationStatus } = await import('./firestore-service')
+            // Firebase Auth is verified but Firestore isn't synced yet
             await updateEmailVerificationStatus(u.uid, true)
             p = { ...p, emailVerified: true }
           }
           setProfile(p)
-        } else {
+        } catch (error) {
+          console.error("[Auth] Firestore error loading profile:", error)
+          // Still set profile to null so UI can react, but don't block auth
           setProfile(null)
+        } finally {
+          setProfileLoading(false)
         }
-      } catch (error) {
-        const errMsg = (error as Error)?.message || 'unknown error'
-        if (errMsg.includes("Database") || errMsg.includes("Firestore")) {
-          console.error("[Auth] Firestore database error - make sure database is created:", error)
-        } else if (errMsg.includes("offline")) {
-          console.warn("[Auth] Currently offline, will retry when online")
-        } else {
-          console.error("[Auth] Error in auth state change:", error)
-        }
+      } else {
         setProfile(null)
-      } finally {
-        setLoading(false)
+        setProfileLoading(false)
       }
+      setLoading(false)
     })
+
     return () => unsub()
   }, [])
 
-  const loginEmail = useCallback(async (email: string, password: string) => {
-    if (!auth) throw new Error("Firebase Auth not configured")
-    await signInWithEmailAndPassword(auth, email, password)
+  // ── Email / password signup ────────────────────────────────────────────────
+  const signupEmail = useCallback(async (
+    name: string,
+    email: string,
+    password: string,
+    phone?: string,
+  ) => {
+    if (!auth) throw new Error("Firebase not configured")
+
+    // Step 1 — create Firebase Auth account (throws on auth errors e.g. email-already-in-use)
+    const cred = await createUserWithEmailAndPassword(auth, email, password)
+
+    // Step 2 — update display name (best-effort, don't throw)
+    try {
+      await updateProfile(cred.user, { displayName: name })
+    } catch (e) {
+      console.warn("[Auth] updateProfile failed:", e)
+    }
+
+    // Step 3 — write Firestore profile (best-effort, don't throw to caller)
+    try {
+      await createUserProfile({
+        uid: cred.user.uid,
+        email: cred.user.email || '',
+        displayName: name,
+        phoneNumber: phone,
+        avatarUrl: undefined,
+        emailVerified: false,
+      })
+      await createAccountSettings(cred.user.uid)
+    } catch (e) {
+      console.warn("[Auth] Firestore profile creation failed (will retry on next login):", e)
+    }
+
+    // Step 4 — send verification email (best-effort, don't throw)
+    try {
+      await sendEmailVerification(cred.user, {
+        url: `${window.location.origin}/login`,
+        handleCodeInApp: false,
+      })
+      // best-effort: update sent time
+      try {
+        await updateEmailVerificationSentTime(cred.user.uid)
+      } catch (_) { /* ignore */ }
+    } catch (e) {
+      console.warn("[Auth] sendEmailVerification failed:", e)
+    }
+
+    // Signup is considered successful — caller routes to /verify-email
   }, [])
 
-  const signupEmail = useCallback(
-    async (name: string, email: string, password: string, phone?: string, avatarUrl?: string) => {
-      if (!auth) throw new Error("Firebase Auth not configured")
-      const cred = await createUserWithEmailAndPassword(auth, email, password)
-      
-      try {
-        // Update profile with name and avatar
-        if (name) await updateProfile(cred.user, { displayName: name })
-        
-        // Create user profile with all data
-        await createUserProfile({
-          uid: cred.user.uid,
-          email: cred.user.email || '',
-          displayName: name,
-          phoneNumber: phone,
-          avatarUrl: avatarUrl || cred.user.photoURL || undefined,
-          emailVerified: false,
-        })
-        
-        // Create account settings
-        await createAccountSettings(cred.user.uid)
-        
-        // Send email verification - this may fail but account is already created
-        try {
-          await sendEmailVerification(cred.user, {
-            url: typeof window !== 'undefined' ? `${window.location.origin}/verify-email` : undefined,
-          })
-          await updateEmailVerificationSentTime(cred.user.uid)
-        } catch (emailErr) {
-          console.warn("[Auth] Warning: could not send verification email, but account created:", emailErr)
-          // Don't throw - account is created, user can resend from verify-email page
-        }
-      } catch (err) {
-        console.error("[Auth] Error during signup:", err)
-        throw err
-      }
-    },
-    [],
-  )
+  // ── Email / password login ─────────────────────────────────────────────────
+  const loginEmail = useCallback(async (email: string, password: string) => {
+    if (!auth) throw new Error("Firebase not configured")
+    await signInWithEmailAndPassword(auth, email, password)
+    // onAuthStateChanged will update profile & profileLoading
+  }, [])
 
-
-
+  // ── Google login / signup ──────────────────────────────────────────────────
   const loginGoogle = useCallback(async () => {
-    if (!auth) throw new Error("Firebase Auth not configured")
+    if (!auth) throw new Error("Firebase not configured")
     const provider = new GoogleAuthProvider()
     provider.setCustomParameters({ prompt: 'select_account' })
-    
+
     const result = await signInWithPopup(auth, provider)
-    const googleUser = result.user
-    
-    // Check if profile exists, if not create it
+    const gUser = result.user
+
+    // Ensure Firestore profile exists (best-effort)
     try {
-      let profile = await getUserProfile(googleUser.uid)
-      if (!profile) {
-        // New Google user — create profile with auto-verified email
+      const existing = await getUserProfile(gUser.uid)
+      if (!existing) {
         await createUserProfile({
-          uid: googleUser.uid,
-          email: googleUser.email || '',
-          displayName: googleUser.displayName || 'Google User',
-          phoneNumber: undefined,
-          avatarUrl: googleUser.photoURL || undefined,
-          emailVerified: true, // Google users are automatically verified
+          uid: gUser.uid,
+          email: gUser.email || '',
+          displayName: gUser.displayName || '',
+          avatarUrl: gUser.photoURL || undefined,
+          emailVerified: true,
         })
-        await createAccountSettings(googleUser.uid)
+        await createAccountSettings(gUser.uid)
       }
-    } catch (error) {
-      console.error("[Auth] Error creating Google profile:", error)
-      throw error
+    } catch (e) {
+      console.warn("[Auth] Google profile creation failed:", e)
     }
+    // onAuthStateChanged fires and updates state
   }, [])
 
+  // ── Logout ─────────────────────────────────────────────────────────────────
   const logout = useCallback(async () => {
     await signOut(auth)
   }, [])
 
   return (
-    <AuthContext.Provider
-        value={{
-          user,
-          profile,
-          loading,
-          refreshProfile,
-          loginEmail,
-          signupEmail,
-          loginGoogle,
-          logout,
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
+    <AuthContext.Provider value={{
+      user,
+      profile,
+      loading,
+      profileLoading,
+      refreshProfile,
+      loginEmail,
+      signupEmail,
+      loginGoogle,
+      logout,
+    }}>
+      {children}
+    </AuthContext.Provider>
   )
 }
 

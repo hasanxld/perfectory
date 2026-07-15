@@ -10,57 +10,52 @@ import { GoogleIcon } from "@/components/google-icon"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
-  const { loginEmail, loginGoogle, profile, user } = useAuth()
+  const { loginEmail, loginGoogle, profile, profileLoading, user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [show, setShow] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
-    setLoading(true)
+    setSubmitting(true)
     try {
       await loginEmail(email, password)
-      // Redirect handled by useEffect below after profile loads
+      // Redirect handled by useEffect once profile loads
     } catch (err) {
       setError(mapError(err))
-      setLoading(false)
+      setSubmitting(false)
     }
   }
 
   async function handleGoogleLogin() {
     setError("")
-    setLoading(true)
+    setSubmitting(true)
     try {
       await loginGoogle()
-      // Redirect handled by useEffect after profile loads
+      // Redirect handled by useEffect once profile loads
     } catch (err) {
       setError(mapError(err))
-      setLoading(false)
+      setSubmitting(false)
     }
   }
 
-  // After login, redirect based on email verification status
+  // Redirect once Firebase Auth + Firestore profile are both resolved
   useEffect(() => {
-    // Wait for auth loading to finish
-    if (loading) return
-    
-    // If no user and not loading, user is logged out - don't redirect
-    if (!user) return
-    
-    // If profile is still null, keep waiting (it's loading)
-    if (profile === undefined) return
-    
-    // Profile loaded - now we can check verification status
-    if (!profile || !profile.emailVerified) {
-      router.push("/verify-email")
+    if (authLoading || profileLoading) return  // still initialising
+    if (!user) return                           // not logged in — stay on page
+    // Profile is loaded — redirect based on email verification
+    if (profile?.emailVerified) {
+      router.replace("/dashboard")
     } else {
-      router.push("/dashboard")
+      router.replace("/verify-email")
     }
-  }, [user, profile, router, loading])
+  }, [authLoading, profileLoading, user, profile, router])
+
+  const loading = submitting || authLoading || profileLoading
 
 
 
@@ -104,7 +99,7 @@ export default function LoginPage() {
             </button>
           </div>
         </div>
-        <GButton type="submit" loading={loading} className="mt-2 w-full">
+        <GButton type="submit" loading={submitting} disabled={submitting} className="mt-2 w-full">
           <Icon name="login-3-bold" size={18} />
           Log In
         </GButton>
