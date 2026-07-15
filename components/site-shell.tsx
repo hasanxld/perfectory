@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ReactNode, useMemo, useCallback } from "react"
+import { useState, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
@@ -31,18 +31,18 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
 
-  const nav = useMemo(() => (user ? userNav : guestNav), [user])
+  const nav = user ? userNav : guestNav
 
-  const handleLogout = useCallback(async () => {
+  async function handleLogout() {
     await logout()
     setOpen(false)
     router.push("/")
-  }, [logout, router])
+  }
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       {/* animated background lines */}
-      <div aria-hidden className="bg-fx pointer-events-none fixed inset-0 -z-10">
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 grid-lines opacity-40" />
         <div className="absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-brand-2/20 blur-[120px]" />
         <div className="absolute bottom-0 right-0 size-[28rem] rounded-full bg-brand-3/15 blur-[120px]" />
@@ -56,7 +56,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
-              className="grid size-10 place-items-center rounded-full border border-border/50 text-muted-foreground transition hover:text-foreground lg:hidden"
+              className="grid size-10 place-items-center rounded-xl border border-border text-muted-foreground transition hover:text-foreground lg:hidden"
               aria-label="Open menu"
             >
               <Icon name="hamburger-menu-broken" size={22} />
@@ -108,7 +108,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   <GButton size="sm" variant="ghost">Login</GButton>
                 </Link>
                 <Link href="/signup">
-                  <GButton size="sm" className="rounded-full">Get Started</GButton>
+                  <GButton size="sm">Get Started</GButton>
                 </Link>
               </>
             )}

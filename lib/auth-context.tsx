@@ -30,7 +30,7 @@ type AuthContextType = {
   loading: boolean
   refreshProfile: () => Promise<void>
   loginEmail: (email: string, password: string) => Promise<void>
-  signupEmail: (name: string, email: string, password: string, phone?: string) => Promise<void>
+  signupEmail: (name: string, email: string, password: string) => Promise<void>
   loginGoogle: () => Promise<void>
   logout: () => Promise<void>
 }
@@ -72,23 +72,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signupEmail = useCallback(
-    async (name: string, email: string, password: string, phone?: string) => {
+    async (name: string, email: string, password: string) => {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
-      // Generate DiceBear avatar from user's initials
-      const initials = name
-        .split(" ")
-        .map((word) => word[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
-      const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(initials)}&backgroundColor=random`
-      if (name) await updateProfile(cred.user, { displayName: name, photoURL: avatarUrl })
+      if (name) await updateProfile(cred.user, { displayName: name })
       await ensureUserProfile({
         uid: cred.user.uid,
         email: cred.user.email,
         name,
-        phone,
-        photoURL: avatarUrl,
+        photoURL: cred.user.photoURL,
       })
     },
     [],
@@ -102,19 +93,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth)
   }, [])
 
-  const value = {
-    user,
-    profile,
-    loading,
-    refreshProfile,
-    loginEmail,
-    signupEmail,
-    loginGoogle,
-    logout,
-  }
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        loading,
+        refreshProfile,
+        loginEmail,
+        signupEmail,
+        loginGoogle,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

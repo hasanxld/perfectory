@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
     setLoading(true)
@@ -31,9 +31,9 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
-  }, [email, password, loginEmail, router])
+  }
 
-  const handleGoogle = useCallback(async () => {
+  async function handleGoogle() {
     setError("")
     setGoogleLoading(true)
     try {
@@ -44,7 +44,7 @@ export default function LoginPage() {
     } finally {
       setGoogleLoading(false)
     }
-  }, [loginGoogle, router])
+  }
 
   return (
     <AuthShell title="Welcome back" subtitle="Log in to continue to your voice studio">
@@ -66,12 +66,7 @@ export default function LoginPage() {
           />
         </div>
         <div>
-          <div className="mb-1.5 flex items-center justify-between">
-            <label className="block text-sm text-muted-foreground">Password</label>
-            <Link href="/forgot-password" className="text-xs text-brand-1 hover:underline">
-              Forgot password?
-            </Link>
-          </div>
+          <label className="mb-1.5 block text-sm text-muted-foreground">Password</label>
           <div className="relative">
             <GInput
               type={show ? "text" : "password"}
@@ -91,7 +86,7 @@ export default function LoginPage() {
             </button>
           </div>
         </div>
-        <GButton type="submit" loading={loading} className="mt-3 w-full">
+        <GButton type="submit" loading={loading} className="mt-2 w-full">
           <Icon name="login-3-bold" size={18} />
           Log In
         </GButton>

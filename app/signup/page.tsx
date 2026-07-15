@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
@@ -14,46 +14,31 @@ export default function SignupPage() {
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("+880")
   const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
   const [show, setShow] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
-    if (!name.trim()) {
-      setError("Please enter your full name.")
-      return
-    }
-    if (phone.length < 13) {
-      setError("Please enter a valid Bangladesh phone number.")
-      return
-    }
     if (password.length < 6) {
       setError("Password must be at least 6 characters.")
       return
     }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.")
-      return
-    }
     setLoading(true)
     try {
-      await signupEmail(name, email, password, phone)
+      await signupEmail(name, email, password)
       router.push("/dashboard")
     } catch (err) {
       setError(mapError(err))
     } finally {
       setLoading(false)
     }
-  }, [name, email, phone, password, confirmPassword, signupEmail, router])
+  }
 
-  const handleGoogle = useCallback(async () => {
+  async function handleGoogle() {
     setError("")
     setGoogleLoading(true)
     try {
@@ -64,7 +49,7 @@ export default function SignupPage() {
     } finally {
       setGoogleLoading(false)
     }
-  }, [loginGoogle, router])
+  }
 
   return (
     <AuthShell title="Create your account" subtitle="Get 50 free credits and start generating voice">
@@ -81,7 +66,7 @@ export default function SignupPage() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your full name"
+            placeholder="Your name"
           />
         </div>
         <div>
@@ -92,21 +77,6 @@ export default function SignupPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm text-muted-foreground">Phone number (Bangladesh)</label>
-          <GInput
-            type="tel"
-            required
-            value={phone}
-            onChange={(e) => {
-              const val = e.target.value
-              if (val.startsWith("+880")) setPhone(val.slice(0, 14))
-              else if (val.startsWith("+88")) setPhone("+880" + val.slice(3).replace(/\D/g, ""))
-              else setPhone("+880" + val.replace(/\D/g, ""))
-            }}
-            placeholder="+880XXXXXXXXXX"
           />
         </div>
         <div>
@@ -127,27 +97,6 @@ export default function SignupPage() {
               aria-label="Toggle password"
             >
               <Icon name={show ? "eye-closed-bold" : "eye-bold"} size={18} />
-            </button>
-          </div>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm text-muted-foreground">Confirm password</label>
-          <div className="relative">
-            <GInput
-              type={showConfirm ? "text" : "password"}
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter your password"
-              className="pr-12"
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirm((s) => !s)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              aria-label="Toggle confirm password"
-            >
-              <Icon name={showConfirm ? "eye-closed-bold" : "eye-bold"} size={18} />
             </button>
           </div>
         </div>

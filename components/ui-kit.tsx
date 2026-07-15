@@ -89,7 +89,7 @@ export function GCard({
   return (
     <div
       className={cn(
-        "gradient-border rounded-3xl p-6 will-change-transform",
+        "gradient-border rounded-3xl p-6",
         cut &&
           "[clip-path:polygon(22px_0,100%_0,100%_calc(100%-22px),calc(100%-22px)_100%,0_100%,0_22px)]",
         className,
