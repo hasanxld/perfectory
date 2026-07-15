@@ -15,6 +15,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   updateProfile,
+  sendEmailVerification,
   type User,
 } from "firebase/auth"
 import { auth } from "./firebase-config"
@@ -25,7 +26,6 @@ import {
   updateEmailVerificationSentTime,
   type UserProfile,
 } from "./firestore-service"
-import { sendEmailVerification } from "firebase/auth"
 
 type AuthContextType = {
   user: User | null

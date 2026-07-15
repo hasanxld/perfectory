@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { applyActionCode, confirmPasswordReset, checkActionCode, auth } from '@/lib/firebase-config'
+import { applyActionCode, checkActionCode } from '@/lib/firebase-config'
+import { auth } from '@/lib/firebase-config'
 import { SiteShell } from '@/components/site-shell'
 import { GCard } from '@/components/ui-kit'
 import { Icon } from '@/components/icon'
