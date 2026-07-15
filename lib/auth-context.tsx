@@ -87,7 +87,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setProfile(null)
         }
       } catch (error) {
-        console.error("[Auth] Error in auth state change:", error)
+        const errMsg = (error as Error)?.message || 'unknown error'
+        if (errMsg.includes("Database") || errMsg.includes("Firestore")) {
+          console.error("[Auth] Firestore database error - make sure database is created:", error)
+        } else if (errMsg.includes("offline")) {
+          console.warn("[Auth] Currently offline, will retry when online")
+        } else {
+          console.error("[Auth] Error in auth state change:", error)
+        }
+        setProfile(null)
       } finally {
         setLoading(false)
       }
@@ -105,29 +113,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!auth) throw new Error("Firebase Auth not configured")
       const cred = await createUserWithEmailAndPassword(auth, email, password)
       
-      // Update profile with name and avatar
-      if (name) await updateProfile(cred.user, { displayName: name })
-      
-      // Create user profile with all data
-      await createUserProfile({
-        uid: cred.user.uid,
-        email: cred.user.email || '',
-        displayName: name,
-        phoneNumber: phone,
-        avatarUrl: avatarUrl || cred.user.photoURL || undefined,
-        emailVerified: false,
-      })
-      
-      // Create account settings
-      await createAccountSettings(cred.user.uid)
-      
-      // Send email verification
       try {
-        await sendEmailVerification(cred.user)
-        await updateEmailVerificationSentTime(cred.user.uid)
+        // Update profile with name and avatar
+        if (name) await updateProfile(cred.user, { displayName: name })
+        
+        // Create user profile with all data
+        await createUserProfile({
+          uid: cred.user.uid,
+          email: cred.user.email || '',
+          displayName: name,
+          phoneNumber: phone,
+          avatarUrl: avatarUrl || cred.user.photoURL || undefined,
+          emailVerified: false,
+        })
+        
+        // Create account settings
+        await createAccountSettings(cred.user.uid)
+        
+        // Send email verification - this may fail but account is already created
+        try {
+          await sendEmailVerification(cred.user, {
+            url: typeof window !== 'undefined' ? `${window.location.origin}/verify-email` : undefined,
+          })
+          await updateEmailVerificationSentTime(cred.user.uid)
+        } catch (emailErr) {
+          console.warn("[Auth] Warning: could not send verification email, but account created:", emailErr)
+          // Don't throw - account is created, user can resend from verify-email page
+        }
       } catch (err) {
-        console.error("[Auth] Error sending email verification:", err)
-        throw new Error("Failed to send verification email")
+        console.error("[Auth] Error during signup:", err)
+        throw err
       }
     },
     [],

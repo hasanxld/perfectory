@@ -32,9 +32,17 @@ export default function LoginPage() {
 
   // After login, redirect based on email verification status
   useEffect(() => {
-    if (!user || loading) return
-    if (profile === null) return // still loading profile
-    if (!profile.emailVerified) {
+    // Wait for auth loading to finish
+    if (loading) return
+    
+    // If no user and not loading, user is logged out - don't redirect
+    if (!user) return
+    
+    // If profile is still null, keep waiting (it's loading)
+    if (profile === undefined) return
+    
+    // Profile loaded - now we can check verification status
+    if (!profile || !profile.emailVerified) {
       router.push("/verify-email")
     } else {
       router.push("/dashboard")

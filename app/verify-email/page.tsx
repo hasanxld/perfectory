@@ -141,12 +141,12 @@ export default function VerifyEmailPage() {
             {/* Steps */}
             <div className="w-full space-y-2.5 rounded-2xl border border-border bg-secondary/30 p-4">
               {[
-                { icon: 'notebook-bold', text: 'Open your Gmail inbox' },
-                { icon: 'stars-bold', text: 'Look for an email from Perfectory Voice' },
-                { icon: 'danger-triangle-bold', text: 'Also check your Spam / Junk folder' },
-                { icon: 'bolt-circle-bold', text: 'Click the verification link inside' },
-              ].map(({ icon, text }) => (
-                <div key={text} className="flex items-center gap-3 text-sm">
+                { id: '1', icon: 'notebook-bold', text: 'Open your Gmail inbox' },
+                { id: '2', icon: 'stars-bold', text: 'Look for an email from Perfectory Voice' },
+                { id: '3', icon: 'danger-triangle-bold', text: 'Also check your Spam / Junk folder' },
+                { id: '4', icon: 'bolt-circle-bold', text: 'Click the verification link inside' },
+              ].map(({ id, icon, text }) => (
+                <div key={id} className="flex items-center gap-3 text-sm">
                   <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-1/10">
                     <Icon name={icon} size={14} className="text-brand-1" />
                   </div>
