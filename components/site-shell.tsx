@@ -56,7 +56,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
-              className="grid size-10 place-items-center rounded-xl border border-border text-muted-foreground transition hover:text-foreground lg:hidden"
+              className="grid size-10 place-items-center rounded-full border border-border/50 text-muted-foreground transition hover:text-foreground lg:hidden"
               aria-label="Open menu"
             >
               <Icon name="hamburger-menu-broken" size={22} />
@@ -108,7 +108,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   <GButton size="sm" variant="ghost">Login</GButton>
                 </Link>
                 <Link href="/signup">
-                  <GButton size="sm">Get Started</GButton>
+                  <GButton size="sm" className="rounded-full">Get Started</GButton>
                 </Link>
               </>
             )}
