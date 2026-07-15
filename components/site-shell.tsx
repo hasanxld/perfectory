@@ -244,15 +244,16 @@ function SiteFooter() {
           <div className="md:col-span-2">
             <p className="text-sm font-medium">Subscribe to our Newsletter</p>
             <p className="mt-2 text-xs text-muted-foreground">Get updates on new features and improvements.</p>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex gap-3">
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-10 flex-1 rounded-lg border border-border bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-1/50"
+                className="h-12 flex-1 rounded-xl border border-border bg-input/60 px-4 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-2 focus:ring-brand-1/70"
               />
-              <button className="rounded-lg bg-brand-1 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-brand-1/90 transition">
+              <button className="group relative inline-flex items-center gap-2 overflow-hidden rounded-2xl px-6 py-3 font-medium transition-all duration-300 gradient-brand text-primary-foreground border border-border shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/15 hover:-translate-y-0.5 [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]">
+                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                 Subscribe
               </button>
             </div>
