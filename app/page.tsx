@@ -71,7 +71,7 @@ export default function HomePage() {
             {Array.from({ length: 40 }).map((_, i) => (
               <span
                 key={i}
-                className="w-1.5 rounded-full gradient-brand"
+                className="w-1.5 rounded-full gradient-metal"
                 style={{
                   height: `${20 + Math.abs(Math.sin(i * 0.7)) * 60}px`,
                   animation: `wave 1.1s ease-in-out ${i * 0.04}s infinite`,

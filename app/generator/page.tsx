@@ -137,7 +137,7 @@ export default function GeneratorPage() {
               {Array.from({ length: 48 }).map((_, i) => (
                 <span
                   key={i}
-                  className="w-1 rounded-full gradient-brand"
+                  className="w-1 rounded-full gradient-metal"
                   style={{
                     height: tts.speaking ? undefined : "12px",
                     transformOrigin: "center",

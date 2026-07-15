@@ -26,7 +26,7 @@ export const GButton = forwardRef<HTMLButtonElement, BtnProps>(
           "[clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]",
           sizes[size],
           variant === "solid" &&
-            "gradient-brand text-primary-foreground shadow-lg shadow-brand-2/25 hover:shadow-brand-2/40 hover:-translate-y-0.5",
+            "gradient-brand text-primary-foreground border border-border shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/15 hover:-translate-y-0.5",
           variant === "outline" &&
             "gradient-border text-foreground hover:-translate-y-0.5",
           variant === "ghost" &&

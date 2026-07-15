@@ -47,30 +47,30 @@
 }
 
 :root {
-  color-scheme: dark;
-  --background: oklch(0.16 0.03 275);
-  --foreground: oklch(0.97 0.01 275);
-  --card: oklch(0.21 0.04 275);
-  --card-foreground: oklch(0.97 0.01 275);
-  --popover: oklch(0.2 0.04 275);
-  --popover-foreground: oklch(0.97 0.01 275);
-  --primary: oklch(0.72 0.16 200);
-  --primary-foreground: oklch(0.15 0.03 275);
-  --secondary: oklch(0.28 0.05 275);
-  --secondary-foreground: oklch(0.97 0.01 275);
-  --muted: oklch(0.26 0.04 275);
-  --muted-foreground: oklch(0.72 0.03 275);
-  --accent: oklch(0.68 0.19 320);
-  --accent-foreground: oklch(0.15 0.03 275);
-  --destructive: oklch(0.62 0.23 20);
-  --border: oklch(0.36 0.05 275 / 55%);
-  --input: oklch(0.3 0.04 275);
-  --ring: oklch(0.72 0.16 200);
+  color-scheme: light;
+  --background: oklch(0.97 0 0);
+  --foreground: oklch(0.22 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0 0);
+  --primary: oklch(0.55 0 0);
+  --primary-foreground: oklch(0.2 0 0);
+  --secondary: oklch(0.955 0 0);
+  --secondary-foreground: oklch(0.28 0 0);
+  --muted: oklch(0.955 0 0);
+  --muted-foreground: oklch(0.5 0 0);
+  --accent: oklch(0.6 0 0);
+  --accent-foreground: oklch(0.2 0 0);
+  --destructive: oklch(0.58 0.22 25);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.965 0 0);
+  --ring: oklch(0.75 0 0);
   --radius: 1rem;
 
-  --brand-1: oklch(0.72 0.16 200);
-  --brand-2: oklch(0.62 0.2 265);
-  --brand-3: oklch(0.68 0.19 320);
+  --brand-1: oklch(0.45 0 0);
+  --brand-2: oklch(0.55 0 0);
+  --brand-3: oklch(0.3 0 0);
 }
 
 @layer base {
@@ -87,20 +87,31 @@
 }
 
 @layer utilities {
+  /* glossy metallic silver-white */
   .gradient-brand {
     background-image: linear-gradient(
-      120deg,
-      var(--brand-1) 0%,
-      var(--brand-2) 50%,
-      var(--brand-3) 100%
+      180deg,
+      oklch(1 0 0) 0%,
+      oklch(0.95 0 0) 42%,
+      oklch(0.84 0 0) 100%
     );
   }
+  /* darker metallic for waveform bars, visible on white */
+  .gradient-metal {
+    background-image: linear-gradient(
+      180deg,
+      oklch(0.78 0 0) 0%,
+      oklch(0.55 0 0) 55%,
+      oklch(0.38 0 0) 100%
+    );
+  }
+  /* dark metallic gradient for highlighted text (readable on white) */
   .gradient-text {
     background-image: linear-gradient(
       120deg,
-      var(--brand-1) 0%,
-      var(--brand-2) 50%,
-      var(--brand-3) 100%
+      oklch(0.34 0 0) 0%,
+      oklch(0.52 0 0) 50%,
+      oklch(0.2 0 0) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -120,12 +131,12 @@
     margin: -1px;
     border-radius: inherit;
     background: linear-gradient(
-      120deg,
-      var(--brand-1),
-      var(--brand-2),
-      var(--brand-3)
+      160deg,
+      oklch(0.86 0 0),
+      oklch(0.92 0 0),
+      oklch(0.8 0 0)
     );
-    opacity: 0.55;
+    opacity: 1;
   }
   .glass {
     background: color-mix(in oklch, var(--card) 70%, transparent);
