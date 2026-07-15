@@ -71,9 +71,11 @@ export default function HomePage() {
             {Array.from({ length: 40 }).map((_, i) => (
               <span
                 key={i}
-                className="w-1.5 rounded-full gradient-metal"
+                className="w-1.5 rounded-full"
                 style={{
                   height: `${20 + Math.abs(Math.sin(i * 0.7)) * 60}px`,
+                  backgroundImage:
+                    "linear-gradient(180deg, oklch(0.78 0 0) 0%, oklch(0.55 0 0) 55%, oklch(0.38 0 0) 100%)",
                   animation: `wave 1.1s ease-in-out ${i * 0.04}s infinite`,
                 }}
               />
