@@ -228,49 +228,75 @@ function Avatar({ profile }: { profile: { name?: string; photoURL?: string } | n
 }
 
 function SiteFooter() {
+  const [email, setEmail] = React.useState("")
+  
   return (
     <footer className="relative z-10 mt-10 border-t border-border">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
-        <div className="md:col-span-1">
-          <Logo />
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Advanced AI text-to-voice studio supporting Bangla, English and Hindi.
-          </p>
-        </div>
-        <FooterCol
-          title="Product"
-          links={[
-            { label: "Generator", href: "/generator" },
-            { label: "Plans", href: "/plans" },
-            { label: "Dashboard", href: "/dashboard" },
-          ]}
-        />
-        <FooterCol
-          title="Account"
-          links={[
-            { label: "Login", href: "/login" },
-            { label: "Sign Up", href: "/signup" },
-            { label: "Edit Profile", href: "/profile/edit" },
-          ]}
-        />
-        <div>
-          <p className="text-sm font-medium">Languages</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {["Bangla", "English", "Hindi"].map((l) => (
-              <span
-                key={l}
-                className="rounded-lg border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground"
-              >
-                {l}
-              </span>
-            ))}
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        {/* Top section with logo and newsletter */}
+        <div className="mb-12 grid gap-8 md:grid-cols-3">
+          <div>
+            <Logo />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Advanced AI text-to-voice studio supporting Bangla, English and Hindi.
+            </p>
+          </div>
+          <div className="md:col-span-2">
+            <p className="text-sm font-medium">Subscribe to our Newsletter</p>
+            <p className="mt-2 text-xs text-muted-foreground">Get updates on new features and improvements.</p>
+            <div className="mt-4 flex gap-2">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-10 flex-1 rounded-lg border border-border bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-1/50"
+              />
+              <button className="rounded-lg bg-brand-1 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-brand-1/90 transition">
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} Perfectory Voice. All rights reserved.</p>
-          <p className="font-mono">Made with gradient love · Bangla · English · Hindi</p>
+
+        {/* Main footer sections grid */}
+        <div className="mb-12 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+          <FooterCol
+            title="Product"
+            links={[
+              { label: "Generator", href: "/generator" },
+              { label: "Plans", href: "/plans" },
+              { label: "Dashboard", href: "/dashboard" },
+            ]}
+          />
+          <FooterCol
+            title="Account"
+            links={[
+              { label: "Login", href: "/login" },
+              { label: "Sign Up", href: "/signup" },
+              { label: "Edit Profile", href: "/profile/edit" },
+            ]}
+          />
+          <div>
+            <p className="text-sm font-medium">Languages</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {["Bangla", "English", "Hindi"].map((l) => (
+                <span
+                  key={l}
+                  className="rounded-full border border-brand-1/30 bg-brand-1/10 px-3 py-1.5 text-xs font-medium text-brand-1"
+                >
+                  {l}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom section */}
+        <div className="border-t border-border pt-8">
+          <div className="flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+            <p>© {new Date().getFullYear()} Perfectory Voice. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>
