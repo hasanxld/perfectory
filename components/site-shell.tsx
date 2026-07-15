@@ -42,7 +42,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       {/* animated background lines */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
+      <div aria-hidden className="bg-fx pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 grid-lines opacity-40" />
         <div className="absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-brand-2/20 blur-[120px]" />
         <div className="absolute bottom-0 right-0 size-[28rem] rounded-full bg-brand-3/15 blur-[120px]" />

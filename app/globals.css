@@ -89,12 +89,20 @@
     text-rendering: optimizeLegibility;
   }
   button, a, input, textarea, select {
-    transition-property: all;
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+    transition-duration: 160ms;
   }
   button:active {
-    transition-duration: 50ms;
+    transition-duration: 40ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -155,6 +163,11 @@
       );
     background-size: 200% 100%;
     animation: line-move 8s linear infinite;
+    will-change: background-position;
+  }
+  .bg-fx {
+    contain: strict;
+    transform: translateZ(0);
   }
   .grid-lines {
     background-image:
