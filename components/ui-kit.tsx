@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { forwardRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode } from "react"
+import { forwardRef, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode } from "react"
 
 /* Gradient "cutting" button with clipped corner + shine sweep */
 type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -26,7 +26,7 @@ export const GButton = forwardRef<HTMLButtonElement, BtnProps>(
           "[clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]",
           sizes[size],
           variant === "solid" &&
-            "gradient-brand text-primary-foreground shadow-lg shadow-brand-2/25 hover:shadow-brand-2/40 hover:-translate-y-0.5",
+            "gradient-brand text-primary-foreground shadow-sm shadow-brand-2/20 hover:shadow-md hover:shadow-brand-2/30 hover:-translate-y-0.5 transition-shadow duration-200",
           variant === "outline" &&
             "gradient-border text-foreground hover:-translate-y-0.5",
           variant === "ghost" &&
@@ -36,7 +36,7 @@ export const GButton = forwardRef<HTMLButtonElement, BtnProps>(
         {...props}
       >
         {variant === "solid" && (
-          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
         )}
         {loading && (
           <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -77,7 +77,7 @@ export const GTextarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<
 GTextarea.displayName = "GTextarea"
 
 /* Card with gradient hairline border + clipped corner */
-export function GCard({
+export const GCard = memo(function GCard({
   children,
   className,
   cut = true,
@@ -98,12 +98,12 @@ export function GCard({
       {children}
     </div>
   )
-}
+})
 
-export function SectionLabel({ children }: { children: ReactNode }) {
+export const SectionLabel = memo(function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-xs font-medium tracking-widest text-muted-foreground uppercase">
       {children}
     </span>
   )
-}
+})

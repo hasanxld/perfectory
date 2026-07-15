@@ -65,8 +65,8 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* floating waveform preview */}
-        <div className="mt-14 w-full max-w-3xl animate-float">
+        {/* waveform preview */}
+        <div className="mt-14 w-full max-w-3xl">
           <GCard className="flex items-center justify-center gap-1.5 overflow-hidden py-10">
             {Array.from({ length: 40 }).map((_, i) => (
               <span

@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useMemo,
   type ReactNode,
 } from "react"
 import {
@@ -37,6 +38,20 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Cache profile fetches to prevent duplicate requests
+const profileCache = new Map<string, { data: UserProfile; timestamp: number }>()
+const CACHE_TTL = 30000 // 30 seconds
+
+async function getCachedProfile(uid: string): Promise<UserProfile> {
+  const cached = profileCache.get(uid)
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data
+  }
+  const p = await getUserProfile(uid)
+  profileCache.set(uid, { data: p, timestamp: Date.now() })
+  return p
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
@@ -44,27 +59,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshProfile = useCallback(async () => {
     if (!auth.currentUser) return
-    const p = await getUserProfile(auth.currentUser.uid)
+    const p = await getCachedProfile(auth.currentUser.uid)
     setProfile(p)
   }, [])
 
   useEffect(() => {
+    let ignore = false
     const unsub = onAuthStateChanged(auth, async (u) => {
+      if (ignore) return
       setUser(u)
+      setLoading(false) // Mark loading complete immediately for faster paint
       if (u) {
+        // Load profile in background without blocking UI
         const p = await ensureUserProfile({
           uid: u.uid,
           email: u.email,
           name: u.displayName,
           photoURL: u.photoURL,
         })
-        setProfile(p)
+        if (!ignore) {
+          setProfile(p)
+          profileCache.set(u.uid, { data: p, timestamp: Date.now() })
+        }
       } else {
         setProfile(null)
       }
-      setLoading(false)
     })
-    return () => unsub()
+    return () => {
+      ignore = true
+      unsub()
+    }
   }, [])
 
   const loginEmail = useCallback(async (email: string, password: string) => {
@@ -93,19 +117,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth)
   }, [])
 
+  // Memoize value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
+    user,
+    profile,
+    loading,
+    refreshProfile,
+    loginEmail,
+    signupEmail,
+    loginGoogle,
+    logout,
+  }), [user, profile, loading, refreshProfile, loginEmail, signupEmail, loginGoogle, logout])
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        profile,
-        loading,
-        refreshProfile,
-        loginEmail,
-        signupEmail,
-        loginGoogle,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

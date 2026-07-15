@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, useMemo } from "react"
 
 export type LangCode = "bn-BD" | "en-US" | "hi-IN"
 
@@ -30,15 +30,23 @@ export function useTTS() {
     }
   }, [])
 
-  const voicesForLang = useCallback(
-    (lang: LangCode) => {
+  // Cache filtered voices per language to avoid recalculation
+  const voicesForLang = useMemo(() => {
+    const cache: Record<LangCode, SpeechSynthesisVoice[]> = {
+      "bn-BD": [],
+      "en-US": [],
+      "hi-IN": [],
+    }
+    return (lang: LangCode) => {
+      if (cache[lang].length > 0) return cache[lang]
       const base = lang.split("-")[0]
-      return voices.filter(
+      const filtered = voices.filter(
         (v) => v.lang === lang || v.lang.toLowerCase().startsWith(base),
       )
-    },
-    [voices],
-  )
+      cache[lang] = filtered
+      return filtered
+    }
+  }, [voices])
 
   const speak = useCallback(
     (opts: {
