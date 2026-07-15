@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app"
 import { getAuth, GoogleAuthProvider } from "firebase/auth"
-import { getFirestore } from "firebase/firestore"
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore"
+import { getDatabase, connectDatabaseEmulator } from "firebase/database"
 
 const firebaseConfig = {
   apiKey: "AIzaSyCMKNydjhcNLdKu9Nm-pzgq2pSRGDHVk-4",
@@ -19,9 +20,21 @@ export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
 googleProvider.setCustomParameters({ prompt: "select_account" })
 
-// Firestore instance. To use a named (non-default) database, set
-// NEXT_PUBLIC_FIRESTORE_DB_ID; otherwise the default database is used.
+// Firestore instance (for user profiles, plans, etc)
 const dbId = process.env.NEXT_PUBLIC_FIRESTORE_DB_ID
 export const db = dbId ? getFirestore(app, dbId) : getFirestore(app)
+
+// Realtime Database (for generation history, live updates)
+export const rtdb = getDatabase(app)
+
+// Optional: Connect to emulators in development
+if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+  try {
+    connectFirestoreEmulator(db, "localhost", 8080)
+    connectDatabaseEmulator(rtdb, "localhost", 9000)
+  } catch (err) {
+    // emulator already connected, ignore
+  }
+}
 
 export default app

@@ -1,12 +1,14 @@
 "use client"
 
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { SiteShell } from "@/components/site-shell"
 import { RequireAuth } from "@/components/require-auth"
 import { GButton, GCard } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
 import { STARTING_CREDITS } from "@/lib/user-store"
+import { getUserGenerations, type VoiceGeneration } from "@/lib/generation-store"
 
 export default function DashboardPage() {
   return (
@@ -19,7 +21,25 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
-  const { profile } = useAuth()
+  const { user, profile } = useAuth()
+  const [generations, setGenerations] = useState<VoiceGeneration[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!user) return
+    const fetchGenerations = async () => {
+      try {
+        const gens = await getUserGenerations(user.uid, 5)
+        setGenerations(gens)
+      } catch (err) {
+        console.error("[v0] Failed to fetch generations:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchGenerations()
+  }, [user])
+
   if (!profile) return null
 
   const planLabel =
@@ -98,6 +118,29 @@ function DashboardContent() {
         <QuickAction href="/profile/edit" icon="user-id-bold" title="Edit Profile" desc="Update your name, bio and avatar." />
         <QuickAction href={`/u/${profile.username}`} icon="user-circle-bold" title="Public Profile" desc="See how visitors view your profile." />
       </div>
+
+      {/* recent generations */}
+      {generations.length > 0 && (
+        <GCard className="mt-6">
+          <div className="mb-4 flex items-center gap-2">
+            <Icon name="clock-circle-bold" size={22} className="text-brand-1" />
+            <h2 className="text-lg">Recent generations</h2>
+          </div>
+          <div className="space-y-2">
+            {generations.map((gen) => (
+              <div key={gen.id} className="flex items-start justify-between gap-3 border-l-4 border-brand-1/30 px-3 py-2">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{gen.text}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {gen.language.toUpperCase()} • {gen.voice.slice(0, 25)}...
+                  </p>
+                </div>
+                <span className="text-xs text-muted-foreground">{gen.language === "en" ? "🇬🇧" : gen.language === "bn" ? "🇧🇩" : "🇮🇳"}</span>
+              </div>
+            ))}
+          </div>
+        </GCard>
+      )}
     </div>
   )
 }

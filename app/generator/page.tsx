@@ -7,6 +7,7 @@ import { GButton, GCard, GTextarea, SectionLabel } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
 import { spendCredit } from "@/lib/user-store"
+import { saveGeneration } from "@/lib/generation-store"
 import { useTTS, LANGUAGES, type LangCode } from "@/lib/use-tts"
 import { cn } from "@/lib/utils"
 
@@ -55,6 +56,20 @@ export default function GeneratorPage() {
     if (user && !tts.speaking) {
       await spendCredit(user.uid, 1)
       await refreshProfile()
+      // Save generation to history
+      const langCode = lang as "en-US" | "bn-BD" | "hi-IN"
+      const langMap = { "en-US": "en", "bn-BD": "bn", "hi-IN": "hi" } as const
+      try {
+        await saveGeneration(user.uid, {
+          text: text.trim(),
+          language: langMap[langCode],
+          voice: voiceURI,
+          pitch,
+          rate,
+        })
+      } catch (err) {
+        console.error("[v0] Failed to save generation:", err)
+      }
     }
     tts.speak({ text, lang, voiceURI, rate, pitch, volume })
   }, [text, user, credits, tts, lang, voiceURI, rate, pitch, volume, refreshProfile])
