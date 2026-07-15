@@ -259,25 +259,29 @@ function SiteFooter() {
           </div>
         </div>
 
-        {/* Main footer sections grid */}
-        <div className="mb-12 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-          <FooterCol
-            title="Product"
-            links={[
-              { label: "Generator", href: "/generator" },
-              { label: "Plans", href: "/plans" },
-              { label: "Dashboard", href: "/dashboard" },
-            ]}
-          />
-          <FooterCol
-            title="Account"
-            links={[
-              { label: "Login", href: "/login" },
-              { label: "Sign Up", href: "/signup" },
-              { label: "Edit Profile", href: "/profile/edit" },
-            ]}
-          />
-          <div>
+        {/* Main footer sections grid with cards */}
+        <div className="mb-12 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          <div className="rounded-xl border border-border bg-white p-6">
+            <FooterCol
+              title="Product"
+              links={[
+                { label: "Generator", href: "/generator" },
+                { label: "Plans", href: "/plans" },
+                { label: "Dashboard", href: "/dashboard" },
+              ]}
+            />
+          </div>
+          <div className="rounded-xl border border-border bg-white p-6">
+            <FooterCol
+              title="Account"
+              links={[
+                { label: "Login", href: "/login" },
+                { label: "Sign Up", href: "/signup" },
+                { label: "Edit Profile", href: "/profile/edit" },
+              ]}
+            />
+          </div>
+          <div className="rounded-xl border border-border bg-white p-6">
             <p className="text-sm font-medium">Languages</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {["Bangla", "English", "Hindi"].map((l) => (
