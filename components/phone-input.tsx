@@ -17,24 +17,27 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
 
   const formatPhoneNumber = (input: string): string => {
     // Remove all non-digits
-    const digitsOnly = input.replace(/\D/g, '')
+    let digitsOnly = input.replace(/\D/g, '')
     
-    // Convert to standard format
-    let formatted = digitsOnly
+    // Limit to exactly 10 digits (after +880 conversion)
+    // If user enters 880XXXXXXXXXX, keep it. Otherwise, add 880 prefix
     if (digitsOnly.startsWith('880')) {
-      formatted = digitsOnly
+      // Already has country code, limit to 12 digits total
+      digitsOnly = digitsOnly.slice(0, 12)
     } else if (digitsOnly.startsWith('0')) {
-      formatted = '880' + digitsOnly.slice(1)
-    } else if (digitsOnly.length > 0) {
-      formatted = '880' + digitsOnly
+      // Bangladesh domestic format (0XXXXXXXXX), convert to 880XXXXXXXXX and limit
+      digitsOnly = '880' + digitsOnly.slice(1, 11) // 880 + 10 digits
+    } else {
+      // Just digits, add 880 prefix and limit to 10 digits
+      digitsOnly = '880' + digitsOnly.slice(0, 10)
     }
     
     // Format for display: +880 XX XXX XXXX
-    if (formatted.length >= 3) {
-      const part1 = formatted.slice(0, 3)
-      const part2 = formatted.slice(3, 5)
-      const part3 = formatted.slice(5, 8)
-      const part4 = formatted.slice(8, 12)
+    if (digitsOnly.length >= 3) {
+      const part1 = digitsOnly.slice(0, 3)
+      const part2 = digitsOnly.slice(3, 5)
+      const part3 = digitsOnly.slice(5, 8)
+      const part4 = digitsOnly.slice(8, 12)
       
       let display = `+${part1}`
       if (part2) display += ` ${part2}`
@@ -44,7 +47,7 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
       return display
     }
     
-    return digitsOnly ? `+${formatted}` : ''
+    return digitsOnly ? `+${digitsOnly}` : ''
   }
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

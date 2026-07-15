@@ -26,7 +26,7 @@ export function validateEmail(email: string): { valid: boolean; error?: string }
   return { valid: true }
 }
 
-// Phone validation - Bangladesh format with +880
+// Phone validation - Bangladesh format with +880 (exactly 10 digits after +880)
 export function validatePhone(phone: string): { valid: boolean; error?: string; formatted?: string } {
   const digitsOnly = phone.replace(/\D/g, '')
   
@@ -40,9 +40,9 @@ export function validatePhone(phone: string): { valid: boolean; error?: string; 
     finalNumber = '880' + digitsOnly
   }
   
-  // Bangladesh numbers should have 12 digits total (880 + 10 digit local)
+  // Bangladesh numbers should have exactly 12 digits total (880 + 10 digit local)
   if (finalNumber.length !== 12) {
-    return { valid: false, error: 'Bangladesh phone number must be 10 digits' }
+    return { valid: false, error: 'Phone number must be exactly 10 digits' }
   }
   
   if (!finalNumber.startsWith('880')) {
