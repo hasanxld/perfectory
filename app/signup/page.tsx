@@ -159,7 +159,7 @@ export default function SignupPage() {
 
         {/* Email Field - Gmail Only */}
         <div>
-          <label className="block text-sm font-medium mb-1.5">Email Address (Gmail only)</label>
+          <label className="block text-sm font-medium mb-1.5">Email Address</label>
           <div className="relative">
             <GInput
               type="email"

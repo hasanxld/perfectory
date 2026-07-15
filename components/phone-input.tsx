@@ -48,7 +48,14 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
   }
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value
+    let inputValue = e.target.value
+    
+    // Prevent deletion of +880 prefix
+    if (inputValue.length < value.length && !inputValue.startsWith('+880')) {
+      // User tried to delete the prefix, restore the full value
+      return
+    }
+    
     const formatted = formatPhoneNumber(inputValue)
     onChange(formatted)
     
@@ -56,7 +63,7 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
     const validation = validatePhone(formatted)
     setIsValid(validation.valid)
     onValidChange?.(validation.valid)
-  }, [onChange, onValidChange])
+  }, [onChange, onValidChange, value])
 
   return (
     <div className="space-y-1.5">

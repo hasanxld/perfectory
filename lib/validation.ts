@@ -131,10 +131,12 @@ export function validateFullName(name: string): { valid: boolean; error?: string
   return { valid: true }
 }
 
-// Generate avatar URL from name
+// Generate avatar URL from name using DiceBear (beautiful male/female avatars)
 export function generateAvatarUrl(name: string): string {
   const encodedName = encodeURIComponent(name.trim())
-  return `https://ui-avatars.com/api/?name=${encodedName}&background=random&color=fff&size=256&bold=true&rounded=true`
+  // Use personas style which gives beautiful male/female avatars
+  // seed is based on name to get consistent avatars
+  return `https://api.dicebear.com/7.x/personas/svg?seed=${encodedName}&scale=80&radius=50`
 }
 
 // Get color based on password strength
