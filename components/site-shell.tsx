@@ -250,7 +250,7 @@ function SiteFooter() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 flex-1 rounded-xl border border-border bg-input/60 px-4 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-2 focus:ring-brand-1/70"
+                className="h-12 flex-1 rounded-2xl border border-border bg-gradient-to-b from-card to-background px-4 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground/60 focus:border-brand-1 focus:ring-2 focus:ring-brand-1/20 hover:border-border/80"
               />
               <button className="group relative inline-flex items-center gap-2 overflow-hidden rounded-2xl px-6 py-3 font-medium transition-all duration-300 gradient-brand text-primary-foreground border border-border shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/15 hover:-translate-y-0.5 [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]">
                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
