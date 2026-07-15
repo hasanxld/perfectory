@@ -187,7 +187,7 @@ export default function GeneratorPage() {
           </GCard>
 
           {/* settings */}
-          <GCard className="flex flex-col gap-6">
+          <GCard className="flex min-w-0 flex-col gap-6">
             <div>
               <label className="mb-2 flex items-center gap-2 text-sm">
                 <Icon name="user-speak-bold" size={16} className="text-brand-2" />
