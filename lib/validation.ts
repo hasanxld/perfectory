@@ -55,7 +55,7 @@ export function validatePhone(phone: string): { valid: boolean; error?: string; 
     return { valid: false, error: 'Invalid phone number format' }
   }
   
-  const formatted = `+${finalNumber.slice(0, 3)} ${finalNumber.slice(3, 5)} ${finalNumber.slice(5, 8)} ${finalNumber.slice(8)}`
+  const formatted = `+${finalNumber}`
   return { valid: true, formatted }
 }
 

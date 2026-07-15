@@ -32,21 +32,7 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
       digitsOnly = '880' + digitsOnly.slice(0, 10)
     }
     
-    // Format for display: +880 XX XXX XXXX
-    if (digitsOnly.length >= 3) {
-      const part1 = digitsOnly.slice(0, 3)
-      const part2 = digitsOnly.slice(3, 5)
-      const part3 = digitsOnly.slice(5, 8)
-      const part4 = digitsOnly.slice(8, 12)
-      
-      let display = `+${part1}`
-      if (part2) display += ` ${part2}`
-      if (part3) display += ` ${part3}`
-      if (part4) display += ` ${part4}`
-      
-      return display
-    }
-    
+    // Format for display: +8801744298642 (continuous format)
     return digitsOnly ? `+${digitsOnly}` : ''
   }
 
@@ -76,7 +62,7 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
           type="tel"
           value={value}
           onChange={handleChange}
-          placeholder="+880 XX XXX XXXX"
+          placeholder="+8801744298642"
         />
         {isValid && value && (
           <Icon
