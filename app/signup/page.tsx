@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
 import { GButton, GInput } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
+import { GoogleIcon } from "@/components/google-icon"
 import { useAuth } from "@/lib/auth-context"
 import { PhoneInput } from "@/components/phone-input"
 import { PasswordStrengthMeter } from "@/components/password-strength-meter"
@@ -250,7 +251,7 @@ export default function SignupPage() {
         variant="outline"
         className="w-full"
       >
-        <Icon name="google-bold" size={18} />
+        <GoogleIcon size={18} />
         Sign up with Google
       </GButton>
 

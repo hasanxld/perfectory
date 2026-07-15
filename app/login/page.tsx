@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
 import { GButton, GInput } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
+import { GoogleIcon } from "@/components/google-icon"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
@@ -128,7 +129,7 @@ export default function LoginPage() {
         variant="outline"
         className="w-full"
       >
-        <Icon name="google-bold" size={18} />
+        <GoogleIcon size={18} />
         Log in with Google
       </GButton>
 
