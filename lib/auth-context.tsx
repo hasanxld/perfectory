@@ -8,7 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react"
-import { Preloader } from "@/components/preloader"
+
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -120,9 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <>
-      <Preloader isLoading={loading} />
-      <AuthContext.Provider
+    <AuthContext.Provider
         value={{
           user,
           profile,
@@ -136,7 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       >
         {children}
       </AuthContext.Provider>
-    </>
   )
 }
 

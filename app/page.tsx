@@ -92,7 +92,7 @@ export default function HomePage() {
         </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((f) => (
-            <GCard key={f.title} className="transition hover:-translate-y-1">
+            <GCard key={f.title} className="transition hover:-translate-y-1 flex flex-col items-center text-center">
               <span className="grid size-12 place-items-center rounded-2xl gradient-brand text-primary-foreground">
                 <Icon name={f.icon} size={24} />
               </span>

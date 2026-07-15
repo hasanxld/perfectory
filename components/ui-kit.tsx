@@ -102,7 +102,7 @@ export function GCard({
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+    <span className="inline-flex items-center gap-2 rounded-full border border-brand-1/30 bg-brand-1/10 px-4 py-1.5 text-xs font-medium tracking-widest text-brand-1 uppercase">
       {children}
     </span>
   )
