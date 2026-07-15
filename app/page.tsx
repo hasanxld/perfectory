@@ -75,7 +75,7 @@ export default function HomePage() {
                 style={{
                   height: `${20 + Math.abs(Math.sin(i * 0.7)) * 60}px`,
                   backgroundImage:
-                    "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(0.88 0 0) 50%, oklch(0.75 0 0) 100%)",
+                    "linear-gradient(180deg, oklch(0.72 0.16 200) 0%, oklch(0.62 0.2 265) 50%, oklch(0.68 0.19 320) 100%)",
                   animation: `wave 1.1s ease-in-out ${i * 0.04}s infinite`,
                 }}
               />

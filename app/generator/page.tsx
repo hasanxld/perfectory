@@ -154,7 +154,7 @@ export default function GeneratorPage() {
                   style={{
                     height: tts.speaking ? undefined : "12px",
                     backgroundImage:
-                      "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(0.88 0 0) 50%, oklch(0.75 0 0) 100%)",
+                      "linear-gradient(180deg, oklch(0.72 0.16 200) 0%, oklch(0.62 0.2 265) 50%, oklch(0.68 0.19 320) 100%)",
                     transformOrigin: "center",
                     animation: tts.speaking
                       ? `wave 1s ease-in-out ${i * 0.03}s infinite`
