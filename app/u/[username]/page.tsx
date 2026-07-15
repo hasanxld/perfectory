@@ -5,8 +5,10 @@ import Link from "next/link"
 import { SiteShell } from "@/components/site-shell"
 import { GButton, GCard } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
-import { getProfileByUsername, type UserProfile } from "@/lib/user-store"
+import { type UserProfile } from "@/lib/firestore-service"
 import { useAuth } from "@/lib/auth-context"
+import { db } from "@/lib/firebase-config"
+import { collection, query, where, getDocs } from "firebase/firestore"
 
 export default function PublicProfilePage({
   params,
@@ -20,17 +22,46 @@ export default function PublicProfilePage({
 
   useEffect(() => {
     let active = true
-    getProfileByUsername(username).then((p) => {
-      if (!active) return
-      if (!p) setState("notfound")
-      else if (!p.isPublic && p.uid !== user?.uid) {
-        setProfile(p)
-        setState("private")
-      } else {
-        setProfile(p)
-        setState("found")
+    const loadProfile = async () => {
+      try {
+        const usersRef = collection(db, 'users')
+        const q = query(usersRef, where('username', '==', username))
+        const snapshot = await getDocs(q)
+        const p = snapshot.empty ? null : (snapshot.docs[0].data() as UserProfile)
+        if (!active) return
+        if (!p) setState("notfound")
+        else setState("found")
+      } catch (error) {
+        console.error('[Profile] Error loading profile:', error)
+        setState("notfound")
       }
-    })
+    }
+    loadProfile()
+    return () => {
+      active = false
+    }
+  }, [username])
+
+  useEffect(() => {
+    let active = true
+    const loadProfile = async () => {
+      try {
+        const usersRef = collection(db, 'users')
+        const q = query(usersRef, where('username', '==', username))
+        const snapshot = await getDocs(q)
+        const p = snapshot.empty ? null : (snapshot.docs[0].data() as UserProfile)
+        if (!active) return
+        if (!p) setState("notfound")
+        else {
+          setProfile(p)
+          setState("found")
+        }
+      } catch (error) {
+        console.error('[Profile] Error loading profile:', error)
+        if (active) setState("notfound")
+      }
+    }
+    loadProfile()
     return () => {
       active = false
     }

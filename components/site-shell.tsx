@@ -145,7 +145,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="mt-6 flex items-center gap-3 rounded-2xl border border-border bg-secondary/40 p-3">
             <Avatar profile={profile} />
             <div className="min-w-0">
-              <p className="truncate text-sm">{profile?.name}</p>
+              <p className="truncate text-sm">{profile?.displayName}</p>
               <p className="truncate text-xs text-muted-foreground">
                 @{profile?.username}
               </p>
@@ -209,20 +209,20 @@ export function SiteShell({ children }: { children: ReactNode }) {
   )
 }
 
-function Avatar({ profile }: { profile: { name?: string; photoURL?: string } | null }) {
-  if (profile?.photoURL) {
+function Avatar({ profile }: { profile: { displayName?: string; avatarUrl?: string } | null }) {
+  if (profile?.avatarUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={profile.photoURL || "/placeholder.svg"}
-        alt={profile.name ?? "Avatar"}
+        src={profile.avatarUrl || "/placeholder.svg"}
+        alt={profile.displayName ?? "Avatar"}
         className="size-10 rounded-xl object-cover ring-2 ring-brand-1/40"
       />
     )
   }
   return (
     <span className="grid size-10 place-items-center rounded-xl gradient-brand text-sm font-medium text-primary-foreground">
-      {(profile?.name ?? "U").slice(0, 1).toUpperCase()}
+      {(profile?.displayName ?? "U").slice(0, 1).toUpperCase()}
     </span>
   )
 }

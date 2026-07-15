@@ -5,18 +5,16 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
 import { GButton, GInput } from "@/components/ui-kit"
-import { GoogleButton } from "@/components/google-button"
 import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
-  const { loginEmail, loginGoogle } = useAuth()
+  const { loginEmail } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState("")
 
   async function handleSubmit(e: React.FormEvent) {
@@ -33,18 +31,7 @@ export default function LoginPage() {
     }
   }
 
-  async function handleGoogle() {
-    setError("")
-    setGoogleLoading(true)
-    try {
-      await loginGoogle()
-      router.push("/dashboard")
-    } catch (err) {
-      setError(mapError(err))
-    } finally {
-      setGoogleLoading(false)
-    }
-  }
+
 
   return (
     <AuthShell title="Welcome back" subtitle="Log in to continue to your voice studio">
@@ -92,13 +79,7 @@ export default function LoginPage() {
         </GButton>
       </form>
 
-      <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        OR
-        <span className="h-px flex-1 bg-border" />
-      </div>
 
-      <GoogleButton onClick={handleGoogle} loading={googleLoading} label="Continue with Google" />
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}

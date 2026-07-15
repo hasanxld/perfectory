@@ -13,17 +13,17 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
   signOut,
   updateProfile,
   type User,
 } from "firebase/auth"
-import { auth, googleProvider, isConfigured } from "./firebase"
+import { auth } from "./firebase-config"
 import {
-  ensureUserProfile,
+  createUserProfile,
   getUserProfile,
+  createAccountSettings,
   type UserProfile,
-} from "./user-store"
+} from "./firestore-service"
 
 type AuthContextType = {
   user: User | null
@@ -32,7 +32,6 @@ type AuthContextType = {
   refreshProfile: () => Promise<void>
   loginEmail: (email: string, password: string) => Promise<void>
   signupEmail: (name: string, email: string, password: string) => Promise<void>
-  loginGoogle: () => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -54,12 +53,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (!isConfigured) {
-      console.warn("[Auth] Firebase not configured. Skipping auth setup.")
-      setLoading(false)
-      return
-    }
-
     if (!auth) {
       console.error("[Auth] Auth instance not available")
       setLoading(false)
@@ -70,12 +63,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         setUser(u)
         if (u) {
-          const p = await ensureUserProfile({
-            uid: u.uid,
-            email: u.email,
-            name: u.displayName,
-            photoURL: u.photoURL,
-          })
+          let p = await getUserProfile(u.uid)
+          if (!p) {
+            p = await createUserProfile({
+              uid: u.uid,
+              email: u.email || '',
+              displayName: u.displayName || '',
+              avatarUrl: u.photoURL || undefined,
+            })
+            await createAccountSettings(u.uid)
+          }
           setProfile(p)
         } else {
           setProfile(null)
@@ -99,21 +96,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!auth) throw new Error("Firebase Auth not configured")
       const cred = await createUserWithEmailAndPassword(auth, email, password)
       if (name) await updateProfile(cred.user, { displayName: name })
-      await ensureUserProfile({
+      await createUserProfile({
         uid: cred.user.uid,
-        email: cred.user.email,
-        name,
-        photoURL: cred.user.photoURL,
+        email: cred.user.email || '',
+        displayName: name,
+        avatarUrl: cred.user.photoURL || undefined,
       })
+      await createAccountSettings(cred.user.uid)
     },
     [],
   )
 
-  const loginGoogle = useCallback(async () => {
-    if (!auth || !googleProvider)
-      throw new Error("Firebase Auth not configured")
-    await signInWithPopup(auth, googleProvider)
-  }, [])
+
 
   const logout = useCallback(async () => {
     await signOut(auth)
@@ -128,7 +122,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           refreshProfile,
           loginEmail,
           signupEmail,
-          loginGoogle,
           logout,
         }}
       >

@@ -6,7 +6,7 @@ import { SiteShell } from "@/components/site-shell"
 import { GButton, GCard, GTextarea, SectionLabel } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
-import { spendCredit, saveGeneration } from "@/lib/user-store"
+import { saveGenerationHistory, deductCredits } from "@/lib/firestore-service"
 import { useTTS, LANGUAGES, type LangCode } from "@/lib/use-tts"
 import { cn } from "@/lib/utils"
 
@@ -54,19 +54,17 @@ export default function GeneratorPage() {
     }
     if (user && !tts.speaking) {
       try {
-        await spendCredit(user.uid, 1)
-        await refreshProfile()
-        // Save generation to Firestore
-        await saveGeneration(user.uid, {
+        await deductCredits(user.uid, 1)
+        await saveGenerationHistory(user.uid, {
           text,
-          language: lang,
-          voice: voiceURI,
-          pitch,
-          speed: rate,
-          volume,
+          voiceId: voiceURI,
+          voiceName: voiceURI,
+          audioUrl: '',
+          creditsUsed: 1,
         })
+        await refreshProfile()
       } catch (error) {
-        console.error("Error saving generation:", error)
+        console.error("[Generator] Error saving generation:", error)
       }
     }
     tts.speak({ text, lang, voiceURI, rate, pitch, volume })
