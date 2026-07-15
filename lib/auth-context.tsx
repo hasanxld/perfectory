@@ -93,19 +93,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth)
   }, [])
 
+  const value = {
+    user,
+    profile,
+    loading,
+    refreshProfile,
+    loginEmail,
+    signupEmail,
+    loginGoogle,
+    logout,
+  }
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        profile,
-        loading,
-        refreshProfile,
-        loginEmail,
-        signupEmail,
-        loginGoogle,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

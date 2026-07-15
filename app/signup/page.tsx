@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
@@ -20,7 +20,7 @@ export default function SignupPage() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState("")
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     if (password.length < 6) {
@@ -36,9 +36,9 @@ export default function SignupPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [name, email, password, signupEmail, router])
 
-  async function handleGoogle() {
+  const handleGoogle = useCallback(async () => {
     setError("")
     setGoogleLoading(true)
     try {
@@ -49,7 +49,7 @@ export default function SignupPage() {
     } finally {
       setGoogleLoading(false)
     }
-  }
+  }, [loginGoogle, router])
 
   return (
     <AuthShell title="Create your account" subtitle="Get 50 free credits and start generating voice">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
+import { useState, type ReactNode, useMemo, useCallback } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
@@ -31,13 +31,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
 
-  const nav = user ? userNav : guestNav
+  const nav = useMemo(() => (user ? userNav : guestNav), [user])
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     await logout()
     setOpen(false)
     router.push("/")
-  }
+  }, [logout, router])
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">

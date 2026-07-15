@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useCallback } from "react"
 import Link from "next/link"
 import { SiteShell } from "@/components/site-shell"
 import { GButton, GCard, GTextarea, SectionLabel } from "@/components/ui-kit"
@@ -38,7 +38,7 @@ export default function GeneratorPage() {
   const canGenerate = user ? credits > 0 : true
   const chars = text.trim().length
 
-  async function handleGenerate() {
+  const handleGenerate = useCallback(async () => {
     setNotice("")
     if (!text.trim()) {
       setNotice("Please enter some text first.")
@@ -57,7 +57,7 @@ export default function GeneratorPage() {
       await refreshProfile()
     }
     tts.speak({ text, lang, voiceURI, rate, pitch, volume })
-  }
+  }, [text, user, credits, tts, lang, voiceURI, rate, pitch, volume, refreshProfile])
 
   const noVoiceForLang = langVoices.length === 0
 
