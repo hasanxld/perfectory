@@ -16,12 +16,16 @@ export function AuthShell({
   title: string
   subtitle: string
 }) {
-  const { user, loading } = useAuth()
+  const { user, profile, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && user) router.replace("/dashboard")
-  }, [loading, user, router])
+    if (loading || !user) return
+    // Only redirect fully verified users away from auth pages
+    if (profile?.emailVerified) {
+      router.replace("/dashboard")
+    }
+  }, [loading, user, profile, router])
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
