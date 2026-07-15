@@ -135,16 +135,27 @@ export default function PlansPage() {
               </div>
 
               {/* Action Button */}
-              <GButton
-                onClick={() => upgradePlan(plan.id)}
-                disabled={busy === plan.id || currentPlan === plan.id}
-                className={cn('mt-6 w-full', currentPlan === plan.id && 'opacity-50')}
-              >
-                {busy === plan.id ? 'Processing...' : currentPlan === plan.id ? 'Current Plan' : `Choose ${plan.name}`}
-              </GButton>
+              {!user ? (
+                <GButton
+                  onClick={() => router.push('/signup')}
+                  className="mt-6 w-full"
+                >
+                  Get Started
+                </GButton>
+              ) : (
+                <>
+                  <GButton
+                    onClick={() => upgradePlan(plan.id)}
+                    disabled={busy === plan.id || currentPlan === plan.id}
+                    className={cn('mt-6 w-full', currentPlan === plan.id && 'opacity-50')}
+                  >
+                    {busy === plan.id ? 'Processing...' : currentPlan === plan.id ? 'Current Plan' : `Choose ${plan.name}`}
+                  </GButton>
 
-              {currentPlan === plan.id && (
-                <p className="mt-2 text-center text-xs text-green-600 font-medium">✓ Currently active</p>
+                  {currentPlan === plan.id && (
+                    <p className="mt-2 text-center text-xs text-green-600 font-medium">✓ Currently active</p>
+                  )}
+                </>
               )}
             </div>
           </GCard>
