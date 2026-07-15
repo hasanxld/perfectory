@@ -10,6 +10,11 @@ import {
   where,
   getDocs,
   serverTimestamp,
+  addDoc,
+  deleteDoc,
+  Timestamp,
+  orderBy,
+  limit,
 } from "firebase/firestore"
 
 export const STARTING_CREDITS = 50
@@ -102,4 +107,90 @@ export async function spendCredit(uid: string, amount = 1) {
 
 export async function addCredits(uid: string, amount: number) {
   await updateDoc(doc(db, USERS, uid), { credits: increment(amount) })
+}
+
+// Voice Generation History
+export type VoiceGeneration = {
+  id?: string
+  text: string
+  language: string
+  voice: string
+  pitch: number
+  speed: number
+  volume: number
+  audioUrl?: string
+  duration?: number
+  creditsUsed?: number
+  createdAt?: unknown
+}
+
+export async function saveGeneration(
+  uid: string,
+  data: VoiceGeneration,
+): Promise<string> {
+  const generationsRef = collection(db, USERS, uid, "generations")
+  const docRef = await addDoc(generationsRef, {
+    ...data,
+    creditsUsed: 1,
+    createdAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+export async function getGenerationHistory(uid: string, limitCount = 50) {
+  const generationsRef = collection(db, USERS, uid, "generations")
+  const q = query(
+    generationsRef,
+    orderBy("createdAt", "desc"),
+    limit(limitCount),
+  )
+  const snapshot = await getDocs(q)
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as (VoiceGeneration & { id: string })[]
+}
+
+export async function deleteGeneration(uid: string, generationId: string) {
+  const genRef = doc(db, USERS, uid, "generations", generationId)
+  await deleteDoc(genRef)
+}
+
+// Favorite Voices/Presets
+export type FavoriteVoice = {
+  id?: string
+  name: string
+  language: string
+  voice: string
+  pitch: number
+  speed: number
+  volume: number
+  createdAt?: unknown
+}
+
+export async function saveFavoriteVoice(
+  uid: string,
+  data: FavoriteVoice,
+): Promise<string> {
+  const voicesRef = collection(db, USERS, uid, "favoriteVoices")
+  const docRef = await addDoc(voicesRef, {
+    ...data,
+    createdAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+export async function getFavoriteVoices(uid: string) {
+  const voicesRef = collection(db, USERS, uid, "favoriteVoices")
+  const q = query(voicesRef, orderBy("createdAt", "desc"))
+  const snapshot = await getDocs(q)
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as (FavoriteVoice & { id: string })[]
+}
+
+export async function deleteFavoriteVoice(uid: string, voiceId: string) {
+  const voiceRef = doc(db, USERS, uid, "favoriteVoices", voiceId)
+  await deleteDoc(voiceRef)
 }
