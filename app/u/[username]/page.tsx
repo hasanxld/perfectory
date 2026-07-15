@@ -108,20 +108,20 @@ export default function PublicProfilePage({
             <GCard className="relative overflow-hidden">
               <div className="absolute inset-0 -z-10 gradient-brand opacity-10" />
               <div className="flex flex-col items-center gap-4 py-6 text-center sm:flex-row sm:text-left">
-                {profile.photoURL ? (
+                {profile.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={profile.photoURL || "/placeholder.svg"}
-                    alt={profile.name}
+                    src={profile.avatarUrl || "/placeholder.svg"}
+                    alt={profile.displayName}
                     className="size-24 rounded-3xl object-cover ring-2 ring-brand-1/50"
                   />
                 ) : (
                   <span className="grid size-24 place-items-center rounded-3xl gradient-brand text-3xl text-primary-foreground">
-                    {profile.name.slice(0, 1).toUpperCase()}
+                    {(profile.displayName || 'U').slice(0, 1).toUpperCase()}
                   </span>
                 )}
                 <div className="flex-1">
-                  <h1 className="text-3xl">{profile.name}</h1>
+                  <h1 className="text-3xl">{profile.displayName}</h1>
                   <p className="mt-1 font-mono text-sm text-muted-foreground">@{profile.username}</p>
                   <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
                     <Badge icon="crown-bold" label={`${planLabel(profile.plan)} plan`} />
@@ -146,7 +146,7 @@ export default function PublicProfilePage({
             <GCard className="mt-6 flex flex-col items-center gap-4 py-8 text-center">
               <Icon name="microphone-3-bold" size={36} className="text-brand-1" />
               <p className="max-w-sm text-sm text-muted-foreground">
-                {profile.name} creates voice content with Perfectory Voice. Try it yourself.
+                {profile.displayName} creates voice content with Perfectory Voice. Try it yourself.
               </p>
               <Link href="/generator">
                 <GButton>

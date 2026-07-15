@@ -67,13 +67,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (u) {
           let p = await getUserProfile(u.uid)
           if (!p) {
+            // New user — create profile (emailVerified false by default for email/password)
             p = await createUserProfile({
               uid: u.uid,
               email: u.email || '',
               displayName: u.displayName || '',
               avatarUrl: u.photoURL || undefined,
+              emailVerified: u.emailVerified, // Google users are auto-verified
             })
             await createAccountSettings(u.uid)
+          } else if (u.emailVerified && !p.emailVerified) {
+            // Firebase Auth says verified but Firestore is not updated yet — sync it
+            const { updateEmailVerificationStatus } = await import('./firestore-service')
+            await updateEmailVerificationStatus(u.uid, true)
+            p = { ...p, emailVerified: true }
           }
           setProfile(p)
         } else {

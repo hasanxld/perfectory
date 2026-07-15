@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthShell } from "@/components/auth-shell"
@@ -9,7 +9,7 @@ import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
-  const { loginEmail } = useAuth()
+  const { loginEmail, profile, user } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -23,13 +23,23 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await loginEmail(email, password)
-      router.push("/dashboard")
+      // Redirect handled by useEffect below after profile loads
     } catch (err) {
       setError(mapError(err))
-    } finally {
       setLoading(false)
     }
   }
+
+  // After login, redirect based on email verification status
+  useEffect(() => {
+    if (!user || loading) return
+    if (profile === null) return // still loading profile
+    if (!profile.emailVerified) {
+      router.push("/verify-email")
+    } else {
+      router.push("/dashboard")
+    }
+  }, [user, profile, router, loading])
 
 
 

@@ -61,6 +61,7 @@ export default function GeneratorPage() {
           voiceName: voiceURI,
           audioUrl: '',
           creditsUsed: 1,
+          createdAt: null,
         })
         await refreshProfile()
       } catch (error) {
