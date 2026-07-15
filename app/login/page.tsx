@@ -47,13 +47,9 @@ export default function LoginPage() {
   useEffect(() => {
     if (authLoading || profileLoading) return  // still initialising
     if (!user) return                           // not logged in — stay on page
-    // Profile is loaded — redirect based on email verification
-    if (profile?.emailVerified) {
-      router.replace("/dashboard")
-    } else {
-      router.replace("/verify-email")
-    }
-  }, [authLoading, profileLoading, user, profile, router])
+    // Profile is loaded — go to dashboard
+    router.replace("/dashboard")
+  }, [authLoading, profileLoading, user, router])
 
   const loading = submitting || authLoading || profileLoading
 

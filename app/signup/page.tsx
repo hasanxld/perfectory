@@ -98,7 +98,7 @@ export default function SignupPage() {
     setLoading(true)
     try {
       await signupEmail(fullName, email, password, phone)
-      router.push("/verify-email")
+      router.push("/dashboard")
     } catch (err) {
       setError(mapError(err))
     } finally {
@@ -131,15 +131,15 @@ export default function SignupPage() {
           </div>
         )}
 
-        {/* Full Name Field */}
+        {/* Username Field */}
         <div>
-          <label className="block text-sm font-medium mb-1.5">Full Name</label>
+          <label className="block text-sm font-medium mb-1.5">Username</label>
           <div className="relative">
             <GInput
               required
               value={fullName}
               onChange={handleFullNameChange}
-              placeholder="Your full name"
+              placeholder="Your username"
             />
             {fullName && !fullNameError && (
               <Icon

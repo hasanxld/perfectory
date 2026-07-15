@@ -2,7 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Share_Tech, Share_Tech_Mono } from 'next/font/google'
 import { AuthProvider } from '@/lib/auth-context'
-import { PagePreloaderListener } from '@/components/page-preloader'
+import { ScrollToTop } from '@/components/scroll-to-top'
 import './globals.css'
 
 const shareTech = Share_Tech({
@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${shareTech.variable} ${shareTechMono.variable} bg-background`}>
       <body className="font-sans antialiased">
-        <PagePreloaderListener />
+        <ScrollToTop />
         <AuthProvider>{children}</AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

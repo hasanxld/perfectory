@@ -25,8 +25,6 @@ import {
   createUserProfile,
   getUserProfile,
   createAccountSettings,
-  updateEmailVerificationSentTime,
-  updateEmailVerificationStatus,
   type UserProfile,
 } from "./firestore-service"
 
@@ -79,13 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               email: u.email || '',
               displayName: u.displayName || '',
               avatarUrl: u.photoURL || undefined,
-              emailVerified: u.emailVerified,
             })
             await createAccountSettings(u.uid)
-          } else if (u.emailVerified && !p.emailVerified) {
-            // Firebase Auth is verified but Firestore isn't synced yet
-            await updateEmailVerificationStatus(u.uid, true)
-            p = { ...p, emailVerified: true }
           }
           setProfile(p)
         } catch (error) {
@@ -132,28 +125,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         displayName: name,
         phoneNumber: phone,
         avatarUrl: undefined,
-        emailVerified: false,
       })
       await createAccountSettings(cred.user.uid)
     } catch (e) {
       console.warn("[Auth] Firestore profile creation failed (will retry on next login):", e)
     }
 
-    // Step 4 — send verification email (best-effort, don't throw)
-    try {
-      await sendEmailVerification(cred.user, {
-        url: `${window.location.origin}/login`,
-        handleCodeInApp: false,
-      })
-      // best-effort: update sent time
-      try {
-        await updateEmailVerificationSentTime(cred.user.uid)
-      } catch (_) { /* ignore */ }
-    } catch (e) {
-      console.warn("[Auth] sendEmailVerification failed:", e)
-    }
-
-    // Signup is considered successful — caller routes to /verify-email
+    // Signup is considered successful — caller routes to /dashboard
   }, [])
 
   // ── Email / password login ─────────────────────────────────────────────────
@@ -181,7 +159,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: gUser.email || '',
           displayName: gUser.displayName || '',
           avatarUrl: gUser.photoURL || undefined,
-          emailVerified: true,
         })
         await createAccountSettings(gUser.uid)
       }
