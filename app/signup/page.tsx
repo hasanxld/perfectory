@@ -117,18 +117,6 @@ export default function SignupPage() {
           </div>
         )}
 
-        {/* Auto Avatar Preview */}
-        {avatarUrl && (
-          <div className="flex justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={avatarUrl}
-              alt="Your avatar"
-              className="size-24 rounded-xl border-2 border-brand-1/30 shadow-lg"
-            />
-          </div>
-        )}
-
         {/* Full Name Field */}
         <div>
           <label className="block text-sm font-medium mb-1.5">Full Name</label>

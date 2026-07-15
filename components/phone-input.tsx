@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { validatePhone } from '@/lib/validation'
 import { Icon } from './icon'
+import { GInput } from './ui-kit'
 
 interface PhoneInputProps {
   value: string
@@ -12,7 +13,6 @@ interface PhoneInputProps {
 }
 
 export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInputProps) {
-  const [isFocused, setIsFocused] = useState(false)
   const [isValid, setIsValid] = useState(false)
 
   const formatPhoneNumber = (input: string): string => {
@@ -66,20 +66,14 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
   }, [onChange, onValidChange, value])
 
   return (
-    <div className="space-y-1.5">
-      <label className="block text-sm font-medium">Phone Number</label>
+    <div>
+      <label className="block text-sm font-medium mb-1.5">Phone Number</label>
       <div className="relative">
-        <input
+        <GInput
           type="tel"
           value={value}
           onChange={handleChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           placeholder="+880 XX XXX XXXX"
-          className="w-full px-3 py-2.5 bg-background border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-1/50 focus:border-brand-1"
-          style={{
-            borderColor: error ? '#ef4444' : isValid && value ? '#10b981' : isFocused ? '#3b82f6' : 'var(--border)',
-          }}
         />
         {isValid && value && (
           <Icon
@@ -96,12 +90,7 @@ export function PhoneInput({ value, onChange, error, onValidChange }: PhoneInput
           />
         )}
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
-      {isValid && value && (
-        <p className="text-xs text-green-600 flex items-center gap-1">
-          <Icon name="check-circle-bold" size={12} /> Valid phone number
-        </p>
-      )}
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   )
 }
