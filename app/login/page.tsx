@@ -66,7 +66,12 @@ export default function LoginPage() {
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm text-muted-foreground">Password</label>
+          <div className="mb-1.5 flex items-center justify-between">
+            <label className="block text-sm text-muted-foreground">Password</label>
+            <Link href="/forgot-password" className="text-xs text-brand-1 hover:underline">
+              Forgot password?
+            </Link>
+          </div>
           <div className="relative">
             <GInput
               type={show ? "text" : "password"}
@@ -86,7 +91,7 @@ export default function LoginPage() {
             </button>
           </div>
         </div>
-        <GButton type="submit" loading={loading} className="mt-2 w-full">
+        <GButton type="submit" loading={loading} className="mt-3 w-full">
           <Icon name="login-3-bold" size={18} />
           Log In
         </GButton>

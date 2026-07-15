@@ -18,6 +18,7 @@ export type UserProfile = {
   uid: string
   email: string | null
   name: string
+  phone?: string
   username: string
   bio: string
   photoURL: string
@@ -43,6 +44,7 @@ export async function ensureUserProfile(params: {
   uid: string
   email: string | null
   name?: string | null
+  phone?: string
   photoURL?: string | null
 }): Promise<UserProfile> {
   const ref = doc(db, USERS, params.uid)
@@ -62,6 +64,7 @@ export async function ensureUserProfile(params: {
     uid: params.uid,
     email: params.email,
     name,
+    phone: params.phone,
     username,
     bio: "",
     photoURL: params.photoURL || "",
