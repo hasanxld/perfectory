@@ -26,7 +26,7 @@ export const GButton = forwardRef<HTMLButtonElement, BtnProps>(
           "[clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]",
           sizes[size],
           variant === "solid" &&
-            "gradient-brand text-primary-foreground border border-border shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/15 hover:-translate-y-0.5",
+            "bg-primary text-primary-foreground border border-primary/20 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 hover:-translate-y-0.5",
           variant === "outline" &&
             "gradient-border text-foreground hover:-translate-y-0.5",
           variant === "ghost" &&
@@ -53,7 +53,7 @@ export const GInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
     <input
       ref={ref}
       className={cn(
-        "h-12 w-full rounded-xl border border-border bg-input/60 px-4 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-2 focus:ring-brand-1/70",
+        "h-12 w-full rounded-xl border border-border bg-input px-4 text-sm text-card-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-transparent focus:ring-2 focus:ring-ring/50",
         className,
       )}
       {...props}
@@ -67,7 +67,7 @@ export const GTextarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<
     <textarea
       ref={ref}
       className={cn(
-        "w-full rounded-2xl border border-border bg-input/60 p-4 text-sm leading-relaxed text-foreground outline-none transition-all placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-2 focus:ring-brand-1/70",
+        "w-full rounded-2xl border border-border bg-input p-4 text-sm leading-relaxed text-card-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-transparent focus:ring-2 focus:ring-ring/50",
         className,
       )}
       {...props}
@@ -89,7 +89,7 @@ export function GCard({
   return (
     <div
       className={cn(
-        "gradient-border rounded-3xl p-6",
+        "bg-card rounded-3xl p-6 border border-border/30",
         cut &&
           "[clip-path:polygon(22px_0,100%_0,100%_calc(100%-22px),calc(100%-22px)_100%,0_100%,0_22px)]",
         className,
@@ -102,7 +102,7 @@ export function GCard({
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-xs font-medium tracking-widest text-secondary-foreground uppercase">
       {children}
     </span>
   )

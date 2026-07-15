@@ -90,7 +90,7 @@ export default function GeneratorPage() {
 
         {/* credits bar */}
         {user && (
-          <div className="mx-auto mt-8 flex max-w-4xl items-center justify-between rounded-2xl border border-border bg-secondary/40 px-5 py-3">
+          <div className="mx-auto mt-8 flex max-w-4xl items-center justify-between rounded-2xl border border-border/40 bg-secondary px-5 py-3">
             <span className="flex items-center gap-2 text-sm">
               <Icon name="bolt-bold" size={18} className="text-brand-1" />
               <span className="font-mono text-lg">{credits}</span>
@@ -209,7 +209,7 @@ export default function GeneratorPage() {
                 Voice
               </label>
               {noVoiceForLang ? (
-                <p className="rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+                <p className="rounded-xl border border-border/40 bg-secondary px-3 py-2 text-xs text-secondary-foreground">
                   No {LANGUAGES.find((l) => l.code === lang)?.label} voice installed on this device. A default voice will be used.
                 </p>
               ) : (
@@ -217,7 +217,7 @@ export default function GeneratorPage() {
                   <select
                     value={voiceURI}
                     onChange={(e) => setVoiceURI(e.target.value)}
-                    className="h-11 w-full appearance-none rounded-xl border border-border bg-input/60 px-3 pr-9 text-sm outline-none focus:ring-2 focus:ring-brand-1/70"
+                    className="h-11 w-full appearance-none rounded-xl border border-border/40 bg-white px-3 pr-9 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-ring/50"
                   >
                     {langVoices.map((v) => (
                       <option key={v.voiceURI} value={v.voiceURI} className="bg-card">
