@@ -271,25 +271,29 @@ function SiteFooter() {
             ]}
           />
           <FooterCol
-            title="Account"
+            title="Company"
             links={[
-              { label: "Login", href: "/login" },
-              { label: "Sign Up", href: "/signup" },
-              { label: "Edit Profile", href: "/profile/edit" },
+              { label: "About", href: "#" },
+              { label: "Contact", href: "#" },
+              { label: "FAQ", href: "#" },
             ]}
           />
           <div>
-            <p className="text-sm font-medium">Languages</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Bangla", "English", "Hindi"].map((l) => (
-                <span
-                  key={l}
-                  className="rounded-full border border-brand-1/30 bg-brand-1/10 px-3 py-1.5 text-xs font-medium text-brand-1"
-                >
-                  {l}
-                </span>
-              ))}
-            </div>
+            <p className="text-sm font-medium mb-4">Resources</p>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-sm text-muted-foreground transition hover:text-foreground">Privacy Policy</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground transition hover:text-foreground">Terms & Conditions</a></li>
+              <li>
+                <p className="text-sm font-medium text-foreground mt-4 mb-2">Languages</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Bangla", "English", "Hindi"].map((l) => (
+                    <span key={l} className="text-xs font-medium text-foreground">
+                      {l}
+                    </span>
+                  ))}
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
 
