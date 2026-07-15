@@ -41,11 +41,18 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      {/* optimized static background */}
+      {/* beautiful gradient background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 grid-lines opacity-20" />
-        <div className="absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-brand-2/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 size-[28rem] rounded-full bg-brand-3/8 blur-3xl" />
+        {/* white gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/50 to-white opacity-40" />
+        
+        {/* subtle grid lines */}
+        <div className="absolute inset-0 grid-lines opacity-15" />
+        
+        {/* premium gradient blobs */}
+        <div className="absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-brand-2/15 blur-3xl" />
+        <div className="absolute bottom-0 right-0 size-[28rem] rounded-full bg-brand-3/12 blur-3xl" />
+        <div className="absolute top-1/2 left-0 size-[24rem] -translate-y-1/2 rounded-full bg-brand-1/8 blur-3xl" />
       </div>
 
       {/* header */}

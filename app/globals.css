@@ -123,15 +123,22 @@
   }
   .gradient-border {
     position: relative;
-    background: var(--card);
+    background: linear-gradient(135deg, 
+      color-mix(in oklch, var(--card) 95%, white 5%),
+      var(--card)
+    );
     background-clip: padding-box;
-    border: 1px solid var(--border);
+    border: 1px solid color-mix(in oklch, var(--border) 80%, white 20%);
     will-change: auto;
   }
   .glass {
-    background: color-mix(in oklch, var(--card) 85%, transparent);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: linear-gradient(135deg, 
+      color-mix(in oklch, var(--card) 90%, transparent),
+      color-mix(in oklch, var(--card) 80%, transparent)
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in oklch, white 40%, transparent);
   }
   /* simplified static grid lines */
   .grid-lines {
