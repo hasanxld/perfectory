@@ -1,4 +1,4 @@
-import { db } from "./firebase"
+import { db, isConfigured } from "./firebase"
 import {
   doc,
   getDoc,
@@ -50,6 +50,20 @@ export async function ensureUserProfile(params: {
   name?: string | null
   photoURL?: string | null
 }): Promise<UserProfile> {
+  if (!isConfigured || !db) {
+    console.warn("[UserStore] Firebase not configured. Returning mock profile.")
+    return {
+      uid: params.uid,
+      email: params.email,
+      name: params.name || "User",
+      username: `user-${params.uid.slice(0, 4)}`,
+      bio: "",
+      photoURL: params.photoURL || "",
+      plan: "free",
+      credits: 50,
+      createdAt: new Date(),
+    } as UserProfile
+  }
   const ref = doc(db, USERS, params.uid)
   const snap = await getDoc(ref)
   if (snap.exists()) {
@@ -80,6 +94,7 @@ export async function ensureUserProfile(params: {
 }
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  if (!isConfigured || !db) return null
   const snap = await getDoc(doc(db, USERS, uid))
   return snap.exists() ? (snap.data() as UserProfile) : null
 }
@@ -87,6 +102,7 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 export async function getProfileByUsername(
   username: string,
 ): Promise<UserProfile | null> {
+  if (!isConfigured || !db) return null
   const res = await getDocs(
     query(collection(db, USERS), where("username", "==", username)),
   )
@@ -98,14 +114,17 @@ export async function updateUserProfile(
   uid: string,
   data: Partial<UserProfile>,
 ) {
+  if (!isConfigured || !db) return
   await updateDoc(doc(db, USERS, uid), data)
 }
 
 export async function spendCredit(uid: string, amount = 1) {
+  if (!isConfigured || !db) return
   await updateDoc(doc(db, USERS, uid), { credits: increment(-amount) })
 }
 
 export async function addCredits(uid: string, amount: number) {
+  if (!isConfigured || !db) return
   await updateDoc(doc(db, USERS, uid), { credits: increment(amount) })
 }
 

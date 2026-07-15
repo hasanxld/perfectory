@@ -12,20 +12,32 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
 }
 
-if (!firebaseConfig.apiKey) {
-  console.warn("[Firebase] Missing environment variables. Please add NEXT_PUBLIC_FIREBASE_* vars to your project settings.")
+const isConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId)
+
+if (!isConfigured) {
+  console.warn(
+    "[Firebase] Missing environment variables. Please add NEXT_PUBLIC_FIREBASE_* vars to your project settings."
+  )
 }
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+let app: ReturnType<typeof initializeApp> | undefined
+let auth: ReturnType<typeof getAuth> | undefined
+let db: ReturnType<typeof getFirestore> | undefined
+let googleProvider: GoogleAuthProvider | undefined
 
-// Auth + Google provider
-export const auth = getAuth(app)
-export const googleProvider = new GoogleAuthProvider()
-googleProvider.setCustomParameters({ prompt: "select_account" })
+try {
+  if (isConfigured) {
+    app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+    auth = getAuth(app)
+    googleProvider = new GoogleAuthProvider()
+    googleProvider.setCustomParameters({ prompt: "select_account" })
 
-// Firestore instance. To use a named (non-default) database, set
-// NEXT_PUBLIC_FIRESTORE_DB_ID; otherwise the default database is used.
-const dbId = process.env.NEXT_PUBLIC_FIRESTORE_DB_ID
-export const db = dbId ? getFirestore(app, dbId) : getFirestore(app)
+    const dbId = process.env.NEXT_PUBLIC_FIRESTORE_DB_ID
+    db = dbId ? getFirestore(app, dbId) : getFirestore(app)
+  }
+} catch (error) {
+  console.error("[Firebase] Initialization failed:", error)
+}
 
+export { app, auth, googleProvider, db, isConfigured }
 export default app
