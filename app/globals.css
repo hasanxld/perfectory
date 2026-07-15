@@ -48,47 +48,29 @@
 
 :root {
   color-scheme: dark;
-  /* Background: pure black */
-  --background: oklch(0.05 0 0);
-  /* Text on black: white */
-  --foreground: oklch(0.98 0 0);
-  /* Containers: pure white */
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.97 0 0);
   --card: oklch(1 0 0);
-  /* Text on white containers: dark/black */
-  --card-foreground: oklch(0.1 0 0);
-  /* Popover (white) */
+  --card-foreground: oklch(0.15 0 0);
   --popover: oklch(1 0 0);
-  /* Text on popover (dark) */
-  --popover-foreground: oklch(0.1 0 0);
-  /* Primary button background */
-  --primary: oklch(0.98 0 0);
-  /* Primary button text: dark */
-  --primary-foreground: oklch(0.1 0 0);
-  /* Secondary: light grey/white */
+  --popover-foreground: oklch(0.15 0 0);
+  --primary: oklch(0.55 0 0);
+  --primary-foreground: oklch(0.2 0 0);
   --secondary: oklch(0.96 0 0);
-  /* Secondary text: dark */
   --secondary-foreground: oklch(0.15 0 0);
-  /* Muted background: dark grey */
-  --muted: oklch(0.15 0 0);
-  /* Muted text: light grey */
+  --muted: oklch(0.3 0 0);
   --muted-foreground: oklch(0.65 0 0);
-  /* Accent */
   --accent: oklch(0.6 0 0);
-  /* Accent text */
-  --accent-foreground: oklch(0.1 0 0);
-  /* Destructive */
+  --accent-foreground: oklch(0.15 0 0);
   --destructive: oklch(0.58 0.22 25);
-  /* Border: light grey */
-  --border: oklch(0.9 0 0);
-  /* Input: white */
-  --input: oklch(0.99 0 0);
-  /* Ring: grey */
-  --ring: oklch(0.3 0 0);
+  --border: oklch(0.92 0 0);
+  --input: oklch(0.98 0 0);
+  --ring: oklch(0.75 0 0);
   --radius: 1rem;
 
-  --brand-1: oklch(0.2 0 0);
-  --brand-2: oklch(0.3 0 0);
-  --brand-3: oklch(0.15 0 0);
+  --brand-1: oklch(0.45 0 0);
+  --brand-2: oklch(0.55 0 0);
+  --brand-3: oklch(0.3 0 0);
 }
 
 @layer base {

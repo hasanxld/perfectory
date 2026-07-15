@@ -51,7 +51,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       </div>
 
       {/* header */}
-      <header className="sticky top-0 z-40 border-b border-border/20 bg-background">
+      <header className="sticky top-0 z-40 border-b border-border glass">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <button
@@ -90,7 +90,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <div className="flex items-center gap-2">
                 <Link
                   href="/dashboard"
-                  className="hidden items-center gap-2 rounded-xl border border-border/40 bg-secondary px-3 py-2 text-sm text-secondary-foreground sm:flex"
+                  className="hidden items-center gap-2 rounded-xl border border-border bg-secondary/40 px-3 py-2 text-sm sm:flex"
                 >
                   <Icon name="bolt-bold" size={16} className="text-brand-1" />
                   <span className="font-mono">{profile?.credits ?? 0}</span>
@@ -126,7 +126,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border/20 bg-background p-5 transition-transform duration-300 lg:hidden",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border glass p-5 transition-transform duration-300 lg:hidden",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -142,7 +142,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         </div>
 
         {user && (
-          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-border/40 bg-secondary p-3">
+          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-border bg-secondary/40 p-3">
             <Avatar profile={profile} />
             <div className="min-w-0">
               <p className="truncate text-sm">{profile?.name}</p>
@@ -163,7 +163,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
                 pathname === item.href
                   ? "gradient-brand text-primary-foreground"
-                  : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground",
+                  : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
               )}
             >
               <Icon name={item.icon} size={20} />
@@ -174,7 +174,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Link
               href={`/u/${profile?.username ?? ""}`}
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted-foreground transition hover:bg-secondary/80 hover:text-foreground"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted-foreground transition hover:bg-secondary/60 hover:text-foreground"
             >
               <Icon name="user-circle-bold" size={20} />
               My Public Profile
@@ -259,7 +259,7 @@ function SiteFooter() {
             {["Bangla", "English", "Hindi"].map((l) => (
               <span
                 key={l}
-                className="rounded-lg border border-border/40 bg-secondary px-3 py-1 text-xs text-secondary-foreground"
+                className="rounded-lg border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground"
               >
                 {l}
               </span>
