@@ -83,7 +83,7 @@ export default function PlansPage() {
             <div
               key={p.id}
               className={cn(
-                "relative flex flex-col rounded-3xl p-6 transition hover:-translate-y-1",
+                "relative flex flex-col items-center text-center rounded-3xl p-6 transition hover:-translate-y-1",
                 "bg-gradient-to-br border border-white/20 text-white shadow-lg",
                 p.gradient,
                 p.highlight && "md:-translate-y-3 md:hover:-translate-y-4 md:ring-2 md:ring-white/50",
@@ -98,7 +98,7 @@ export default function PlansPage() {
                 <Icon name={p.icon} size={24} />
               </span>
               <h3 className="mt-5 text-2xl font-bold">{p.name}</h3>
-              <div className="mt-3 flex items-end gap-1">
+              <div className="mt-3 flex items-end justify-center gap-1">
                 <span className="text-5xl font-bold">${p.price}</span>
                 <span className="mb-1 text-sm text-white/80">
                   /{p.id === "free" ? "forever" : p.id === "monthly" ? "month" : "year"}
@@ -112,8 +112,8 @@ export default function PlansPage() {
               </p>
               <ul className="mt-6 flex flex-1 flex-col gap-3">
                 {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-white/90">
-                    <Icon name="check-circle-bold" size={18} className="mt-0.5 flex-shrink-0" />
+                  <li key={f} className="flex items-center justify-center gap-2 text-sm text-white/90">
+                    <Icon name="check-circle-bold" size={18} className="flex-shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -122,9 +122,10 @@ export default function PlansPage() {
                 onClick={() => choose(p.id, p.credits)}
                 disabled={isCurrent || busy === p.id}
                 className={cn(
-                  "mt-8 w-full rounded-xl py-3 font-medium transition-all duration-200",
-                  "bg-white/20 backdrop-blur text-white hover:bg-white/30 disabled:opacity-60",
-                  "border border-white/30 hover:border-white/50",
+                  "mt-8 inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-medium transition-all duration-300",
+                  "gradient-brand text-primary-foreground border border-border shadow-md shadow-black/10",
+                  "hover:shadow-lg hover:shadow-black/15 hover:-translate-y-0.5 disabled:opacity-60",
+                  "[clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]",
                 )}
               >
                 {isCurrent ? "Current Plan" : p.id === "free" ? "Get Started" : "Choose Plan"}
