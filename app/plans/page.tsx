@@ -13,34 +13,39 @@ const plans = [
   {
     id: "free" as const,
     name: "Free",
-    price: { monthly: 0, yearly: 0 },
+    price: 0,
     credits: 50,
+    dailyCredits: 5,
     icon: "gift-bold",
     highlight: false,
-    features: ["50 starter credits", "All 3 languages", "Standard voices", "Browser playback"],
+    gradient: "from-blue-400 to-blue-600",
+    features: ["50 starter credits", "5 daily credits", "All 3 languages", "Standard voices", "Browser playback"],
   },
   {
     id: "monthly" as const,
-    name: "Monthly",
-    price: { monthly: 9, yearly: 9 },
+    name: "Monthly Pack",
+    price: 9,
     credits: 1000,
+    dailyCredits: 33,
     icon: "crown-bold",
     highlight: true,
-    features: ["1,000 credits / month", "All 3 languages", "Priority voices", "Pitch & speed control", "Public profile badge"],
+    gradient: "from-purple-400 to-pink-600",
+    features: ["1,000 credits / month", "33+ daily credits", "All 3 languages", "Priority voices", "Pitch & speed control", "Public profile badge"],
   },
   {
     id: "yearly" as const,
-    name: "Yearly",
-    price: { monthly: 90, yearly: 90 },
+    name: "Yearly Pack",
+    price: 90,
     credits: 15000,
-    icon: "diamond-bold",
+    dailyCredits: 41,
+    icon: "star-bold",
     highlight: false,
-    features: ["15,000 credits / year", "Everything in Monthly", "2 months free", "Early access features"],
+    gradient: "from-amber-400 to-orange-600",
+    features: ["15,000 credits / year", "41+ daily credits", "Everything in Monthly", "2 months free", "Early access features"],
   },
 ]
 
 export default function PlansPage() {
-  const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly")
   const { user, profile, refreshProfile } = useAuth()
   const router = useRouter()
   const [busy, setBusy] = useState<string | null>(null)
@@ -67,80 +72,64 @@ export default function PlansPage() {
         </SectionLabel>
         <h1 className="mt-6 text-4xl sm:text-5xl">Choose your plan</h1>
         <p className="mt-4 max-w-lg text-muted-foreground">
-          Simple, transparent credits. Upgrade or downgrade any time.
+          Simple, transparent credits. Get daily credits with every plan.
         </p>
-
-        {/* cycle toggle */}
-        <div className="mt-8 inline-flex rounded-2xl border border-border bg-secondary/40 p-1">
-          {(["monthly", "yearly"] as const).map((c) => (
-            <button
-              key={c}
-              onClick={() => setCycle(c)}
-              className={cn(
-                "rounded-xl px-6 py-2 text-sm capitalize transition",
-                cycle === c
-                  ? "gradient-brand text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {c}
-              {c === "yearly" && (
-                <span className="ml-2 rounded-md bg-background/30 px-1.5 py-0.5 text-[10px]">
-                  -17%
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
       </section>
 
       <section className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3">
         {plans.map((p) => {
           const isCurrent = profile?.plan === p.id
           return (
-            <GCard
+            <div
               key={p.id}
               className={cn(
-                "relative flex flex-col transition hover:-translate-y-1",
-                p.highlight && "md:-translate-y-3 md:hover:-translate-y-4",
+                "relative flex flex-col rounded-3xl p-6 transition hover:-translate-y-1",
+                "bg-gradient-to-br border border-white/20 text-white shadow-lg",
+                p.gradient,
+                p.highlight && "md:-translate-y-3 md:hover:-translate-y-4 md:ring-2 md:ring-white/50",
               )}
             >
               {p.highlight && (
-                <span className="absolute right-5 top-5 rounded-full gradient-brand px-3 py-1 text-[11px] font-medium text-primary-foreground">
-                  Popular
+                <span className="absolute right-6 top-6 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-[11px] font-medium text-white">
+                  Most Popular
                 </span>
               )}
-              <span className="grid size-12 place-items-center rounded-2xl gradient-brand text-primary-foreground">
+              <span className="grid size-12 place-items-center rounded-2xl bg-white/20 backdrop-blur text-white">
                 <Icon name={p.icon} size={24} />
               </span>
-              <h3 className="mt-5 text-xl">{p.name}</h3>
+              <h3 className="mt-5 text-2xl font-bold">{p.name}</h3>
               <div className="mt-3 flex items-end gap-1">
-                <span className="text-4xl">${p.price[cycle]}</span>
-                <span className="mb-1 text-sm text-muted-foreground">
-                  /{p.id === "free" ? "forever" : cycle === "yearly" ? "year" : "mo"}
+                <span className="text-5xl font-bold">${p.price}</span>
+                <span className="mb-1 text-sm text-white/80">
+                  /{p.id === "free" ? "forever" : p.id === "monthly" ? "month" : "year"}
                 </span>
               </div>
-              <p className="mt-2 font-mono text-sm text-brand-1">
-                {p.credits.toLocaleString()} credits
+              <p className="mt-3 text-sm text-white/90">
+                <span className="font-mono font-bold">{p.dailyCredits}+</span> daily credits
+              </p>
+              <p className="text-sm text-white/80">
+                <span className="font-mono">{p.credits.toLocaleString()}</span> total
               </p>
               <ul className="mt-6 flex flex-1 flex-col gap-3">
                 {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Icon name="check-circle-bold" size={18} className="mt-0.5 text-brand-1" />
+                  <li key={f} className="flex items-start gap-2 text-sm text-white/90">
+                    <Icon name="check-circle-bold" size={18} className="mt-0.5 flex-shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
-              <GButton
+              <button
                 onClick={() => choose(p.id, p.credits)}
-                loading={busy === p.id}
-                variant={p.highlight ? "solid" : "outline"}
-                className="mt-8 w-full"
-                disabled={isCurrent}
+                disabled={isCurrent || busy === p.id}
+                className={cn(
+                  "mt-8 w-full rounded-xl py-3 font-medium transition-all duration-200",
+                  "bg-white/20 backdrop-blur text-white hover:bg-white/30 disabled:opacity-60",
+                  "border border-white/30 hover:border-white/50",
+                )}
               >
-                {isCurrent ? "Current Plan" : p.id === "free" ? "Get Started" : "Upgrade"}
-              </GButton>
-            </GCard>
+                {isCurrent ? "Current Plan" : p.id === "free" ? "Get Started" : "Choose Plan"}
+              </button>
+            </div>
           )
         })}
       </section>
