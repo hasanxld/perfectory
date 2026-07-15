@@ -53,7 +53,7 @@ export const GInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
     <input
       ref={ref}
       className={cn(
-        "h-12 w-full rounded-xl border border-border bg-input/60 px-4 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-2 focus:ring-brand-1/70",
+        "h-12 w-full rounded-2xl border-2 border-border bg-gradient-to-b from-card to-background px-4 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground/60 focus:border-brand-1 focus:ring-2 focus:ring-brand-1/20 hover:border-border/80",
         className,
       )}
       {...props}
@@ -67,7 +67,7 @@ export const GTextarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<
     <textarea
       ref={ref}
       className={cn(
-        "w-full rounded-2xl border border-border bg-input/60 p-4 text-sm leading-relaxed text-foreground outline-none transition-all placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-2 focus:ring-brand-1/70",
+        "w-full rounded-2xl border-2 border-border bg-gradient-to-b from-card to-background p-4 text-sm leading-relaxed text-foreground outline-none transition-all placeholder:text-muted-foreground/60 focus:border-brand-1 focus:ring-2 focus:ring-brand-1/20 hover:border-border/80",
         className,
       )}
       {...props}

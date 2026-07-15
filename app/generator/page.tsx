@@ -217,7 +217,7 @@ export default function GeneratorPage() {
                   <select
                     value={voiceURI}
                     onChange={(e) => setVoiceURI(e.target.value)}
-                    className="h-11 w-full appearance-none rounded-xl border border-border bg-input/60 px-3 pr-9 text-sm outline-none focus:ring-2 focus:ring-brand-1/70"
+                    className="h-11 w-full appearance-none rounded-2xl border-2 border-border bg-gradient-to-b from-card to-background px-3 pr-9 text-sm outline-none transition-all focus:border-brand-1 focus:ring-2 focus:ring-brand-1/20 hover:border-border/80"
                   >
                     {langVoices.map((v) => (
                       <option key={v.voiceURI} value={v.voiceURI} className="bg-card">

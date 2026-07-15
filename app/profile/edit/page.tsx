@@ -120,7 +120,7 @@ function EditProfileContent() {
 
           <div>
             <label className="mb-1.5 block text-sm text-muted-foreground">Username</label>
-            <div className="flex items-center gap-2 rounded-xl border border-border bg-input/60 px-4">
+            <div className="flex items-center gap-2 rounded-2xl border-2 border-border bg-gradient-to-b from-card to-background px-4 transition-all focus-within:border-brand-1 focus-within:ring-2 focus-within:ring-brand-1/20 hover:border-border/80">
               <span className="text-muted-foreground">@</span>
               <input
                 value={username}
