@@ -113,7 +113,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   <GButton size="sm" variant="ghost">Login</GButton>
                 </Link>
                 <Link href="/signup">
-                  <GButton size="sm">Get Started</GButton>
+                  <GButton size="sm">Sign Up</GButton>
                 </Link>
               </>
             )}
