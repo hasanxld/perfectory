@@ -22,8 +22,10 @@ import {
   createUserProfile,
   getUserProfile,
   createAccountSettings,
+  updateEmailVerificationSentTime,
   type UserProfile,
 } from "./firestore-service"
+import { sendEmailVerification } from "firebase/auth"
 
 type AuthContextType = {
   user: User | null
@@ -31,7 +33,7 @@ type AuthContextType = {
   loading: boolean
   refreshProfile: () => Promise<void>
   loginEmail: (email: string, password: string) => Promise<void>
-  signupEmail: (name: string, email: string, password: string) => Promise<void>
+  signupEmail: (name: string, email: string, password: string, phone?: string, avatarUrl?: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -92,17 +94,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signupEmail = useCallback(
-    async (name: string, email: string, password: string) => {
+    async (name: string, email: string, password: string, phone?: string, avatarUrl?: string) => {
       if (!auth) throw new Error("Firebase Auth not configured")
       const cred = await createUserWithEmailAndPassword(auth, email, password)
+      
+      // Update profile with name and avatar
       if (name) await updateProfile(cred.user, { displayName: name })
+      
+      // Create user profile with all data
       await createUserProfile({
         uid: cred.user.uid,
         email: cred.user.email || '',
         displayName: name,
-        avatarUrl: cred.user.photoURL || undefined,
+        phoneNumber: phone,
+        avatarUrl: avatarUrl || cred.user.photoURL || undefined,
+        emailVerified: false,
       })
+      
+      // Create account settings
       await createAccountSettings(cred.user.uid)
+      
+      // Send email verification
+      try {
+        await sendEmailVerification(cred.user)
+        await updateEmailVerificationSentTime(cred.user.uid)
+      } catch (err) {
+        console.error("[Auth] Error sending email verification:", err)
+        throw new Error("Failed to send verification email")
+      }
     },
     [],
   )

@@ -25,6 +25,9 @@ export interface UserProfile {
   plan: 'free' | 'pro' | 'premium';
   credits: number;
   favoriteVoices: string[];
+  emailVerified: boolean;
+  emailVerificationSentAt?: any;
+  phoneNumber?: string;
   createdAt: any;
   updatedAt: any;
 }
@@ -80,6 +83,9 @@ export const createUserProfile = async (userData: Partial<UserProfile>) => {
     favoriteVoices: [],
     avatarUrl: userData.avatarUrl,
     bio: userData.bio,
+    phoneNumber: userData.phoneNumber,
+    emailVerified: userData.emailVerified || false,
+    emailVerificationSentAt: userData.emailVerificationSentAt,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   };
@@ -277,4 +283,50 @@ export const searchUsers = async (searchTerm: string): Promise<UserProfile[]> =>
   const q = query(usersRef, where('displayName', '>=', searchTerm), where('displayName', '<=', searchTerm + '\uf8ff'));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => doc.data() as UserProfile);
+};
+
+// EMAIL VERIFICATION FUNCTIONS
+export const updateEmailVerificationStatus = async (uid: string, verified: boolean) => {
+  if (!uid) throw new Error('UID is required');
+  
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, {
+    emailVerified: verified,
+    updatedAt: serverTimestamp(),
+  });
+};
+
+export const updateEmailVerificationSentTime = async (uid: string) => {
+  if (!uid) throw new Error('UID is required');
+  
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, {
+    emailVerificationSentAt: serverTimestamp(),
+  });
+};
+
+export const canResendVerificationEmail = async (uid: string): Promise<{ canResend: boolean; nextResendTime?: number }> => {
+  if (!uid) throw new Error('UID is required');
+  
+  const userRef = doc(db, 'users', uid);
+  const snapshot = await getDoc(userRef);
+  const user = snapshot.data() as UserProfile;
+  
+  if (!user?.emailVerificationSentAt) {
+    return { canResend: true };
+  }
+  
+  const lastSentTime = user.emailVerificationSentAt.toDate?.() || new Date(user.emailVerificationSentAt);
+  const now = new Date();
+  const secondsSinceLastEmail = (now.getTime() - lastSentTime.getTime()) / 1000;
+  const cooldownSeconds = 60; // 60 second cooldown
+  
+  if (secondsSinceLastEmail >= cooldownSeconds) {
+    return { canResend: true };
+  }
+  
+  return {
+    canResend: false,
+    nextResendTime: Math.ceil(cooldownSeconds - secondsSinceLastEmail),
+  };
 };

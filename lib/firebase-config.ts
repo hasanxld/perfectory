@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, applyActionCode, checkActionCode, confirmPasswordReset } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
@@ -24,5 +24,8 @@ export const db = getFirestore(app);
 
 // Initialize Cloud Storage and get a reference to the service
 export const storage = getStorage(app);
+
+// Re-export firebase auth functions for convenience
+export { applyActionCode, checkActionCode, confirmPasswordReset };
 
 export default app;
