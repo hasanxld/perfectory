@@ -16,6 +16,8 @@ import {
   signOut,
   updateProfile,
   sendEmailVerification,
+  signInWithPopup,
+  GoogleAuthProvider,
   type User,
 } from "firebase/auth"
 import { auth } from "./firebase-config"
@@ -34,6 +36,7 @@ type AuthContextType = {
   refreshProfile: () => Promise<void>
   loginEmail: (email: string, password: string) => Promise<void>
   signupEmail: (name: string, email: string, password: string, phone?: string, avatarUrl?: string) => Promise<void>
+  loginGoogle: () => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -150,6 +153,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
 
+  const loginGoogle = useCallback(async () => {
+    if (!auth) throw new Error("Firebase Auth not configured")
+    const provider = new GoogleAuthProvider()
+    provider.setCustomParameters({ prompt: 'select_account' })
+    
+    const result = await signInWithPopup(auth, provider)
+    const googleUser = result.user
+    
+    // Check if profile exists, if not create it
+    try {
+      let profile = await getUserProfile(googleUser.uid)
+      if (!profile) {
+        // New Google user — create profile with auto-verified email
+        await createUserProfile({
+          uid: googleUser.uid,
+          email: googleUser.email || '',
+          displayName: googleUser.displayName || 'Google User',
+          phoneNumber: undefined,
+          avatarUrl: googleUser.photoURL || undefined,
+          emailVerified: true, // Google users are automatically verified
+        })
+        await createAccountSettings(googleUser.uid)
+      }
+    } catch (error) {
+      console.error("[Auth] Error creating Google profile:", error)
+      throw error
+    }
+  }, [])
+
   const logout = useCallback(async () => {
     await signOut(auth)
   }, [])
@@ -163,6 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           refreshProfile,
           loginEmail,
           signupEmail,
+          loginGoogle,
           logout,
         }}
       >

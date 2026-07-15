@@ -9,7 +9,7 @@ import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
-  const { loginEmail, profile, user } = useAuth()
+  const { loginEmail, loginGoogle, profile, user } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -24,6 +24,18 @@ export default function LoginPage() {
     try {
       await loginEmail(email, password)
       // Redirect handled by useEffect below after profile loads
+    } catch (err) {
+      setError(mapError(err))
+      setLoading(false)
+    }
+  }
+
+  async function handleGoogleLogin() {
+    setError("")
+    setLoading(true)
+    try {
+      await loginGoogle()
+      // Redirect handled by useEffect after profile loads
     } catch (err) {
       setError(mapError(err))
       setLoading(false)
@@ -97,7 +109,28 @@ export default function LoginPage() {
         </GButton>
       </form>
 
+      {/* Divider */}
+      <div className="relative mt-6 mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+        </div>
+      </div>
 
+      {/* Google Login Button */}
+      <GButton
+        type="button"
+        onClick={handleGoogleLogin}
+        loading={loading}
+        disabled={loading}
+        variant="outline"
+        className="w-full"
+      >
+        <Icon name="google-bold" size={18} />
+        Log in with Google
+      </GButton>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}

@@ -18,7 +18,7 @@ import {
 } from "@/lib/validation"
 
 export default function SignupPage() {
-  const { signupEmail } = useAuth()
+  const { signupEmail, loginGoogle } = useAuth()
   const router = useRouter()
   
   // Form states
@@ -101,6 +101,19 @@ export default function SignupPage() {
     } catch (err) {
       setError(mapError(err))
     } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleGoogleSignup() {
+    setError("")
+    setLoading(true)
+    try {
+      await loginGoogle()
+      // Google users are auto-verified, redirect to dashboard
+      router.push("/dashboard")
+    } catch (err) {
+      setError(mapError(err))
       setLoading(false)
     }
   }
@@ -217,6 +230,29 @@ export default function SignupPage() {
           Create Account
         </GButton>
       </form>
+
+      {/* Divider */}
+      <div className="relative mt-6 mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+        </div>
+      </div>
+
+      {/* Google Sign-up Button */}
+      <GButton
+        type="button"
+        onClick={handleGoogleSignup}
+        loading={loading}
+        disabled={loading}
+        variant="outline"
+        className="w-full"
+      >
+        <Icon name="google-bold" size={18} />
+        Sign up with Google
+      </GButton>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
