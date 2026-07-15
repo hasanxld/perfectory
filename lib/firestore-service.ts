@@ -25,8 +25,6 @@ export interface UserProfile {
   plan: 'free' | 'pro' | 'premium';
   credits: number;
   favoriteVoices: string[];
-  emailVerified: boolean;
-  emailVerificationSentAt?: any;
   phoneNumber?: string;
   createdAt: any;
   updatedAt: any;
@@ -72,11 +70,16 @@ export interface AccountSettings {
 export const createUserProfile = async (userData: Partial<UserProfile>) => {
   if (!userData.uid) throw new Error('UID is required');
 
+  // Generate username from displayName (convert to lowercase, remove spaces, keep alphanumeric)
+  const baseUsername = userData.displayName 
+    ? userData.displayName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+    : userData.email?.split('@')[0] || 'user';
+
   const userRef = doc(db, 'users', userData.uid);
   const profileData: UserProfile = {
     uid: userData.uid,
     email: userData.email || '',
-    username: userData.username || userData.email?.split('@')[0] || 'user',
+    username: userData.username || baseUsername || 'user',
     displayName: userData.displayName || '',
     plan: 'free',
     credits: 50, // Free tier gets 50 credits
@@ -84,8 +87,6 @@ export const createUserProfile = async (userData: Partial<UserProfile>) => {
     avatarUrl: userData.avatarUrl,
     bio: userData.bio,
     phoneNumber: userData.phoneNumber,
-    emailVerified: userData.emailVerified || false,
-    emailVerificationSentAt: userData.emailVerificationSentAt,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   };
@@ -285,48 +286,4 @@ export const searchUsers = async (searchTerm: string): Promise<UserProfile[]> =>
   return snapshot.docs.map((doc) => doc.data() as UserProfile);
 };
 
-// EMAIL VERIFICATION FUNCTIONS
-export const updateEmailVerificationStatus = async (uid: string, verified: boolean) => {
-  if (!uid) throw new Error('UID is required');
-  
-  const userRef = doc(db, 'users', uid);
-  await updateDoc(userRef, {
-    emailVerified: verified,
-    updatedAt: serverTimestamp(),
-  });
-};
 
-export const updateEmailVerificationSentTime = async (uid: string) => {
-  if (!uid) throw new Error('UID is required');
-  
-  const userRef = doc(db, 'users', uid);
-  await updateDoc(userRef, {
-    emailVerificationSentAt: serverTimestamp(),
-  });
-};
-
-export const canResendVerificationEmail = async (uid: string): Promise<{ canResend: boolean; nextResendTime?: number }> => {
-  if (!uid) throw new Error('UID is required');
-  
-  const userRef = doc(db, 'users', uid);
-  const snapshot = await getDoc(userRef);
-  const user = snapshot.data() as UserProfile;
-  
-  if (!user?.emailVerificationSentAt) {
-    return { canResend: true };
-  }
-  
-  const lastSentTime = user.emailVerificationSentAt.toDate?.() || new Date(user.emailVerificationSentAt);
-  const now = new Date();
-  const secondsSinceLastEmail = (now.getTime() - lastSentTime.getTime()) / 1000;
-  const cooldownSeconds = 60; // 60 second cooldown
-  
-  if (secondsSinceLastEmail >= cooldownSeconds) {
-    return { canResend: true };
-  }
-  
-  return {
-    canResend: false,
-    nextResendTime: Math.ceil(cooldownSeconds - secondsSinceLastEmail),
-  };
-};

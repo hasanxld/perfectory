@@ -15,7 +15,6 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   updateProfile,
-  sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
   type User,

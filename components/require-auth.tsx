@@ -16,14 +16,9 @@ export function RequireAuth({ children }: { children: ReactNode }) {
       router.replace("/login")
       return
     }
-    
-    if (!profile?.emailVerified) {
-      router.replace("/verify-email")
-      return
-    }
-  }, [loading, user, profile, router])
+  }, [loading, user, router])
 
-  if (loading || !user || !profile?.emailVerified) {
+  if (loading || !user) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-muted-foreground">
         <Icon name="refresh-bold" size={32} className="animate-spin text-brand-1" />
