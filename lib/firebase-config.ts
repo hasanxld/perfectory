@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, applyActionCode, checkActionCode, confirmPasswordReset } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -20,7 +20,8 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app);
+// Use the 'perfectory' database (not the default)
+export const db = getFirestore(app, 'perfectory');
 
 // Initialize Cloud Storage and get a reference to the service
 export const storage = getStorage(app);
