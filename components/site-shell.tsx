@@ -228,7 +228,7 @@ function Avatar({ profile }: { profile: { name?: string; photoURL?: string } | n
 }
 
 function SiteFooter() {
-  const [email, setEmail] = React.useState("")
+  const [email, setEmail] = useState("")
   
   return (
     <footer className="relative z-10 mt-10 border-t border-border">
