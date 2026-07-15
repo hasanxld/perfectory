@@ -31,11 +31,11 @@ export function Preloader({ isLoading }: { isLoading: boolean }) {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-8">
         {/* Animated logo/waveform */}
-        <div className="flex items-center justify-center gap-1 h-16">
-          {[...Array(40)].map((_, i) => (
+        <div className="flex items-center justify-center gap-0.5 h-16 w-full px-4 max-w-xs">
+          {[...Array(24)].map((_, i) => (
             <div
               key={i}
-              className="w-1.5 rounded-full"
+              className="w-1 rounded-full flex-1"
               style={{
                 backgroundImage:
                   "linear-gradient(180deg, oklch(0.78 0 0) 0%, oklch(0.55 0 0) 55%, oklch(0.38 0 0) 100%)",
