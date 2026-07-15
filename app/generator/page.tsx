@@ -6,7 +6,7 @@ import { SiteShell } from "@/components/site-shell"
 import { GButton, GCard, GTextarea, SectionLabel } from "@/components/ui-kit"
 import { Icon } from "@/components/icon"
 import { useAuth } from "@/lib/auth-context"
-import { spendCredit } from "@/lib/user-store"
+import { spendCredit, saveGeneration } from "@/lib/user-store"
 import { useTTS, LANGUAGES, type LangCode } from "@/lib/use-tts"
 import { cn } from "@/lib/utils"
 
@@ -53,8 +53,21 @@ export default function GeneratorPage() {
       return
     }
     if (user && !tts.speaking) {
-      await spendCredit(user.uid, 1)
-      await refreshProfile()
+      try {
+        await spendCredit(user.uid, 1)
+        await refreshProfile()
+        // Save generation to Firestore
+        await saveGeneration(user.uid, {
+          text,
+          language: lang,
+          voice: voiceURI,
+          pitch,
+          speed: rate,
+          volume,
+        })
+      } catch (error) {
+        console.error("Error saving generation:", error)
+      }
     }
     tts.speak({ text, lang, voiceURI, rate, pitch, volume })
   }
@@ -137,9 +150,11 @@ export default function GeneratorPage() {
               {Array.from({ length: 48 }).map((_, i) => (
                 <span
                   key={i}
-                  className="w-1 rounded-full gradient-brand"
+                  className="w-1 rounded-full"
                   style={{
                     height: tts.speaking ? undefined : "12px",
+                    backgroundImage:
+                      "linear-gradient(180deg, oklch(0.78 0 0) 0%, oklch(0.55 0 0) 55%, oklch(0.38 0 0) 100%)",
                     transformOrigin: "center",
                     animation: tts.speaking
                       ? `wave 1s ease-in-out ${i * 0.03}s infinite`
