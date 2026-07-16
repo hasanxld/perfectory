@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Share_Tech, Share_Tech_Mono } from 'next/font/google'
 import { AuthProvider } from '@/lib/auth-context'
 import { ScrollToTop } from '@/components/scroll-to-top'
+import { ViewSourceButton } from '@/components/view-source-button'
 import './globals.css'
 
 const shareTech = Share_Tech({
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="en" className={`${shareTech.variable} ${shareTechMono.variable} bg-background`}>
       <body className="font-sans antialiased">
         <ScrollToTop />
+        <ViewSourceButton />
         <AuthProvider>{children}</AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
