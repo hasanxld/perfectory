@@ -1,32 +1,32 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, applyActionCode, checkActionCode, confirmPasswordReset } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCs6N0vhMAn7OR10RTB_YjUiMvfClqFJVw',
-  authDomain: 'perfectory-voices.firebaseapp.com',
-  projectId: 'perfectory-voices',
-  storageBucket: 'perfectory-voices.firebasestorage.app',
-  messagingSenderId: '968212963781',
-  appId: '1:968212963781:web:6bf9430037555548702bac',
-  measurementId: 'G-2X7GCBC379',
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Avoid re-initialising on hot reloads
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication and get a reference to the service
+// Auth
 export const auth = getAuth(app);
 
-// Initialize Cloud Firestore and get a reference to the service
-// Use the 'perfectory' database (not the default)
-export const db = getFirestore(app, 'perfectory');
+// Firestore — named database "perfectory" as set in Firebase Console
+// NEXT_PUBLIC_FIRESTORE_DB_ID env var controls the database id
+const firestoreDbId = process.env.NEXT_PUBLIC_FIRESTORE_DB_ID ?? 'perfectory';
+export const db = getFirestore(app, firestoreDbId);
 
-// Initialize Cloud Storage and get a reference to the service
+// Storage
 export const storage = getStorage(app);
 
-// Re-export firebase auth functions for convenience
+// Re-export auth helpers
 export { applyActionCode, checkActionCode, confirmPasswordReset };
 
 export default app;

@@ -43,7 +43,11 @@ function DashboardContent() {
     }
   }
 
-  if (!profile) return null
+  if (!profile) return (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-brand-1" />
+    </div>
+  )
 
   const planLabel = useMemo(() => 
     profile.plan === 'free' ? 'Free' : profile.plan === 'pro' ? 'Pro' : 'Premium',
